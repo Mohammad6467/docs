@@ -14,7 +14,7 @@ DigitalOcean provides you with a compute machines known as a **Droplets** and st
 
 <p>This documentation is appropriate for advanced power users who are familiar with command line tools, editing configuration files, and basic configuration of services of DNS or Nginx.</p>
 
-<p>If you are planning on running an <em>open-membership hub</em> or an <em>application-specific hub</em>, you'll should see <a href="/storage-hubs/overview">the section on Hub Operation</a></p>.
+<p>If you are planning on running an <em>open-membership hub</em> or an <em>application-specific hub</em>, refer to the <a href="/storage-hubs/overview">Hub Overview</a></p>.
 
 </div>
 
@@ -339,7 +339,7 @@ You should have the console open as `root` on your Droplet. In this section, you
    }
    ```
 
-````
+
 
  You'll find that the `driver` is set to `aws`. The DigitalOcean space API exactly mimics the S3 API. Since Gaia doesn't have a DigitalOcean driver, you can just use the `aws` driver with some special configuration.
 
@@ -369,7 +369,7 @@ You should have the console open as `root` on your Droplet. In this section, you
 
   At this point, the `json.config` file should be completed and appear similar to the following &&mdash;; but with your values.
 
-  ```json
+```json
   {
     "serverName": "moxie-gaiahub",
     "port": 4000,
@@ -394,7 +394,7 @@ You should have the console open as `root` on your Droplet. In this section, you
       "json": true
     }
   }
-````
+```
 
 15. Save your config file and close the `vim` editor.
 
