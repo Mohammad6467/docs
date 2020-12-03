@@ -1,13 +1,12 @@
 ---
-title: Building an app with Angular
-description: Learn how to integrate authentication within an Angular application
+title: Stacks Auth with Angular
+description: How to integrate authentication within an Angular application
 experience: beginners
 duration: 30 minutes
 tags:
   - tutorial
-# images:
-#   large: /images/pages/todo-app.svg
-#   sm: /images/pages/todo-app-sm.svg
+images:
+  sm: /images/pages/angular-app-sm.svg
 ---
 
 # Building an with Angular
@@ -36,9 +35,10 @@ Use the `ng new` command to scaffold a new project. We've named ours `ng-stacks-
 ng new --minimal --inline-style --inline-template
 ```
 
-Inside the newly created `ng-stacks-connect` directory, we can boot up the development server on [localhost:4200](http://localhost:4200).
+Inside the newly created `ng-stacks-connect` directory, let's boot up the development server which defaults to [localhost:4200](http://localhost:4200).
 
 ```sh
+cd ng-stacks-connect
 ng serve
 ```
 

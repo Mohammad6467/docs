@@ -1,6 +1,6 @@
 ---
 title: Building a Todo app
-description: Learn how to integrate authentication and data storage.
+description: Learn how to integrate authentication and data storage with React.
 experience: beginners
 duration: 30 minutes
 tags:
