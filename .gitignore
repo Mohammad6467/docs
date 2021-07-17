@@ -1,6 +1,7 @@
 # OS or Editor folders
 .DS_Store
 node_modules
+.vscode
 
 # Jekyllg
 _site
@@ -43,3 +44,6 @@ yarn-error.log*
 .yalc
 yalc.lock
 .cache
+
+# vale
+.vale/check.json

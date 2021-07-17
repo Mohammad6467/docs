@@ -28,7 +28,7 @@ If you first populated your application with the Stacks application generator, y
 | public/manifest.json       | A JSON file that describes your web application to the browser.                                                                                                                |
 | cors                       | Contains example deployment files for cross-origin request configuration.                                                                                                      |
 
-If you use the generator to build Javascript or Vue scaffolding, your project configuration files will be different.
+If you use the generator to build JavasScript or Vue scaffolding, your project configuration files will be different.
 
 Regardless of which scaffolding you use, you must customize and extend this basic scaffolding as needed by your application. For example, you may want to add more properties to the `manifest.json` file. Since every application is different, Stacks Auth cannot give you specific instructions on how to do this. The steps you take are specific to your application.
 
@@ -36,7 +36,7 @@ Regardless of which scaffolding you use, you must customize and extend this basi
 
 When your application authenticates users with Stacks, your DApp at one URL requests a resource (an identity) from another DApp, the Blockstack Browser. A request for a resource outside of the origin (your new website) is called as a _cross-origin request_(CORs). Getting data in this manner can be risky, so you must configure your website security to allow interactions across origins.
 
-You can think of CORS interactions as an apartment building with Security. For example, if you need to borrow a ladder, you could ask a neighbor in your building who has one. Security would likely not have a problem with this request (i.e., same-origin, your building). If you needed a particular tool, however, and you ordered it delivered from an online hardware store (i.e., cross-origin, another site), Security may request identification before allowing the delivery man into the apartment building. (Credit: [Codecademy](https://www.codecademy.com/articles/what-is-cors))
+You can think of CORS interactions as an apartment building with Security. For example, if you need to borrow a ladder, you could ask a neighbor in your building who has one. Security would likely not have a problem with this request (that is, same-origin, your building). If you needed a particular tool, however, and you ordered it delivered from an online hardware store (that is, cross-origin, another site), Security may request identification before allowing the delivery man into the apartment building. (Credit: [Codecademy](https://www.codecademy.com/articles/what-is-cors))
 
 The way you configure CORs depends on which company you use to host your web application. The application generator adds a `cors` directory to your application scaffolding. This directory contains files for Netlify (`_headers` and `_redirects`) as well as one for Firebase (`firebase.json`). The configurations in the `cors` directory make your application's `manifest.json` file accessible to other applications (for example, to the Blockstack Browser). If you are deploying to a service other than Netlify or Firebase, you must configure CORS on that service to include the following headers when serving `manifest.json`:
 

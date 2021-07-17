@@ -27,9 +27,9 @@ Example:
 stacks-node mocknet
 ```
 
-### krypton (deprecated)
+### krypton
 
-Start a node that will join and stream blocks from the public krypton testnet, powered by Blockstack via [Proof of Transfer](/understand-stacks/overview#proof-of-transfer-pox).
+Start a node that will join and stream blocks from the public krypton regtest, powered by Blockstack via [Proof of Transfer](/understand-stacks/overview#proof-of-transfer-pox).
 
 Example:
 
@@ -45,6 +45,16 @@ Example:
 
 ```bash
 stacks-node xenon
+```
+
+### mainnet
+
+Start a node that joins and streams blocks from the public mainnet.
+
+Example:
+
+```bash
+stacks-node mainnet
 ```
 
 ### start
@@ -99,8 +109,7 @@ Example:
 [node]
 rpc_bind = "0.0.0.0:20443"
 p2p_bind = "0.0.0.0:20444"
-bootstrap_node = "048dd4f26101715853533dee005f0915375854fd5be73405f679c1917a5d4d16aaaf3c4c0d7a9c132a36b8c5fe1287f07dad8c910174d789eb24bdfb5ae26f5f27@testnet-miner.blockstack.org:20444"
-# Enter your private key here!
+# Enter your private key here
 seed = "replace-with-your-private-key"
 miner = true
 ```
@@ -108,6 +117,7 @@ miner = true
 #### working_dir (optional)
 
 Absolute path to the directory which the stacks-node will use for storing various data.
+Until [issue 1576](https://github.com/blockstack/stacks-blockchain/issues/1576) is resolved, this option is unsupported -- use at your own risk.
 
 Example:
 
@@ -296,7 +306,7 @@ Example:
 ```toml
 [connection_options]
 public_ip_address = "1.2.3.4:20444"
-download_interval = 10
+download_interval = 60
 walk_interval = 30
 ```
 
@@ -317,7 +327,7 @@ Time (in seconds) between attempts to download blocks.
 Example:
 
 ```toml
-download_interval = 10
+download_interval = 60
 ```
 
 #### walk_interval
@@ -330,6 +340,36 @@ Example:
 walk_interval = 30
 ```
 
+#### read_only_call_limit_read_length
+
+Total number of bytes allowed to be read by an individual read-only function call.
+
+Example:
+
+```toml
+read_only_call_limit_read_length = 100000
+```
+
+#### read_only_call_limit_read_count
+
+Total number of independent read operations permitted for an individual read-only function call.
+
+Example:
+
+```toml
+read_only_call_limit_read_count = 30
+```
+
+#### read_only_call_limit_runtime
+
+[Runtime cost](https://github.com/stacksgov/sips/blob/2d3fd9bf8da7a04f588d90ff6252173d7609d7bf/sips/sip-006/sip-006-runtime-cost-assessment.md#introduction) limit for an individual read-only function call.
+
+Example:
+
+```toml
+read_only_call_limit_runtime = 1000000000
+```
+
 ### Section: burnchain
 
 This section contains configuration options pertaining to the blockchain the stacks-node binds to on the backend for proof-of-transfer (BTC).
@@ -339,10 +379,10 @@ Example:
 ```toml
 [burnchain]
 chain = "bitcoin"
-mode = "krypton"
-peer_host = "bitcoind.blockstack.org"
-rpc_port = 18443
-peer_port = 18444
+mode = "mainnet"
+peer_host = "your.bitcoind.node.org"
+rpc_port = 8332
+peer_port = 8333
 ```
 
 #### chain
@@ -367,12 +407,12 @@ mode = "xenon"
 
 #### peer_host
 
-Domain name of the host running the backend Bitcoin blockchain.
+Domain name of the host running the backend Bitcoin blockchain. It's required to either run a personal Bitcoin node locally, or to use a publicly hosted Bitcoin node.
 
 Example:
 
 ```toml
-peer_host = "bitcoind.xenon.blockstack.org"
+peer_host = "your.bitcoind.node.org"
 ```
 
 #### rpc_port
@@ -382,7 +422,7 @@ peer_host's port stacks-node will connect to for RPC connections.
 Example:
 
 ```toml
-rpc_port = 18443
+rpc_port = 8332
 ```
 
 #### peer_port
@@ -392,38 +432,30 @@ peer_host's port stacks-node will connect to for P2P connections.
 Example:
 
 ```toml
-peer_port = 18444
-```
-
-#### process_exit_at_block_height (optional)
-
-Block height of the burnchain at which the stacks-node will self-terminate. Used during the testnet phases for various testing cycles.
-
-Example:
-
-```toml
-process_exit_at_block_height = 5340
-```
-
-#### burnchain_op_tx_fee (optional)
-
-Transaction fee per burnchain operation.
-
-Example:
-
-```toml
-burnchain_op_tx_fee = 5500
+peer_port = 8333
 ```
 
 #### burn_fee_cap (optional)
 
-Max burn fee for a transaction.
+Maximum amount (in Satoshis) of "burn commitment" to broadcast for the next block's leader election.
 
 Example:
 
 ```toml
 burn_fee_cap = 30000
 ```
+
+#### satoshis_per_byte (optional)
+
+Amount (in Satoshis) per [virtual byte](https://en.bitcoin.it/wiki/Weight_units). This is used to compute the transaction fees.
+
+Example:
+
+```toml
+satoshis_per_byte = 50
+```
+
+So total transaction cost would be `(estimated_tx_size * satoshis_per_byte) + burn_fee_cap`.
 
 #### commit_anchor_block_within (optional)
 
@@ -435,28 +467,28 @@ Example:
 commit_anchor_block_within = 10000
 ```
 
-### Section: mstx_balance
+### Section: ustx_balance (testnet/regtest only)
 
 This section contains configuration options pertaining to the genesis block allocation for an address in micro-STX. If a user changes these values, their node may be in conflict with other nodes on the network and find themselves unable to sync with other nodes.
 
--> This section can be repeated multiple times, and thus is in double-brackets. Each section can define only one address.
+-> This section can repeat multiple times, and thus is in double-brackets. Each section can define only one address. This section is ignored if running a node on mainnet.
 
 Example:
 
 ```toml
-[[mstx_balance]]
+[[ustx_balance]]
 address = "STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6"
 amount = 10000000000000000
 
-[[mstx_balance]]
+[[ustx_balance]]
 address = "ST11NJTTKGVT6D1HY4NJRVQWMQM7TVAR091EJ8P2Y"
 amount = 10000000000000000
 
-[[mstx_balance]]
+[[ustx_balance]]
 address = "ST1HB1T8WRNBYB0Y3T7WXZS38NKKPTBR3EG9EPJKR"
 amount = 10000000000000000
 
-[[mstx_balance]]
+[[ustx_balance]]
 address = "STRYYQQ9M8KAF4NS7WNZQYY59X93XEKR31JP64CP"
 amount = 10000000000000000
 ```

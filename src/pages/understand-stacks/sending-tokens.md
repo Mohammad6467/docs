@@ -60,14 +60,13 @@ const {
   getNonce,
   privateKeyToString,
 } = require('@stacks/transactions');
-const {
-    StacksTestnet,
-} = require ('@stacks/network);
+const { StacksTestnet, StacksMainnet } = require('@stacks/network');
 const { TransactionsApi, Configuration } = require('@stacks/blockchain-api-client');
 
 const apiConfig = new Configuration({
   fetchApi: fetch,
-  basePath: 'https://stacks-node-api.blockstack.org',
+  // for mainnet, replace `testnet` with `mainnet`
+  basePath: 'https://stacks-node-api.testnet.stacks.co',
 });
 
 const key = 'edf9aee84d9b7abc145504dde6726c64f369d37ee34ded868fabd876c26570bc01';
@@ -93,6 +92,7 @@ const fee = new BN(2000);
 const nonce = new BN(0);
 
 // override default setting to broadcast to the Testnet network
+// for mainnet, use `StacksMainnet()`
 const network = new StacksTestnet();
 
 const memo = 'hello world';
@@ -149,7 +149,9 @@ If not specified, the transaction builder will automatically lookup the latest n
 The updated nonce for each account can be retrieved manually using the `getNonce()` function:
 
 ```js
-getNonce(senderAddress);
+const senderAddress = 'SJ2FYQ8Z7JY9BWYZ5WM53SKR6CK7WHJF0691NZ942';
+
+const senderNonce = getNonce(senderAddress);
 ```
 
 ## Step 4: Broadcasting transaction
@@ -157,7 +159,7 @@ getNonce(senderAddress);
 Next, we will broadcast the transaction to the Testnet using the `network` object we created earlier:
 
 ```js
-const txId = await broadcastTransaction(transaction, testnet);
+const txId = await broadcastTransaction(transaction, network);
 ```
 
 As soon as the `broadcastTransaction` is completed, a transaction ID is returned.

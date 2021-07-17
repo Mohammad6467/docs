@@ -1,209 +1,147 @@
 ---
 title: Running a testnet node
-description: Learn how to set up and run a testnet node
+description: Set up and run a testnet node with Docker
 icon: TestnetIcon
 duration: 15 minutes
 experience: beginners
 tags:
   - tutorial
 images:
-  large: /images/pages/testnet.svg
-  sm: /images/pages/testnet-sm.svg
+  large: /images/cli.svg
+  sm: /images/cli.svg
 ---
 
 ## Introduction
 
--> Note: The Stacks 2.0 testnet is currently in development. As part of the testnet, you can run a node and connect it to a public network.
+This procedure demonstrates how to run a local testnet node using Docker images.
 
-This tutorial will walk you through the following steps:
+-> This procedure focuses on Unix-like operating systems (Linux and MacOS). This procedure has not been tested on
+Windows.
 
-- Download and install the node software
-- Run the node
-- Mine Stacks token
+## Prerequisites
 
-## Requirements
+Running a node has no specialized hardware requirements. Users have been successful in running nodes on Raspberry Pi
+boards and other system-on-chip architectures. In order to complete this procedure, you must have the following software
+installed on the node host machine:
 
-If you use Linux, you may need to manually install [`libssl-dev`](https://wiki.openssl.org/index.php/Libssl_API) and other packages. In your command line, run the following to get all packages:
+- [Docker](https://docs.docker.com/get-docker/)
+- [curl](https://curl.se/download.html)
+- [jq](https://stedolan.github.io/jq/download/)
 
-```bash
-sudo apt-get install build-essential cmake libssl-dev pkg-config
+### Firewall configuration
+
+In order for the API node services to work correctly, you must configure any network firewall rules to allow traffic on
+the ports discussed in this section. The details of network and firewall configuration are highly specific to your
+machine and network, so a detailed example isn't provided.
+
+The following ports must open on the host machine:
+
+Ingress:
+
+- stacks-blockchain (open to `0.0.0.0/0`):
+  - `20443 TCP`
+  - `20444 TCP`
+
+Egress:
+
+- `18332`
+- `18333`
+- `20443-20444`
+
+These egress ports are for syncing [`stacks-blockchain`][] and Bitcoin headers. If they're not open, the sync will fail.
+
+## Step 1: initial setup
+
+In order to run the testnet node, you must download the Docker images and create a directory structure to hold the
+persistent data from the services. Download and configure the Docker images with the following commands:
+
+```sh
+docker pull blockstack/stacks-blockchain
 ```
 
-Ensure that you have Rust installed. If you are using macOS, Linux, or another Unix-like OS, run the following. If you are on a different OS, follow the [official Rust installation guide](https://www.rust-lang.org/tools/install).
+Create a directory structure for the service data with the following command:
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+```sh
+mkdir -p ./stacks-node/persistent-data/stacks-blockchain/testnet && cd stacks-node
 ```
 
-In case you just installed Rust, you will be prompted to run the following command to make the `cargo` command available:
+## Step 2: running Stacks blockchain
 
-```bash
-source $HOME/.cargo/env
-```
+Start the [`stacks-blockchain`][] container with the following command:
 
-## Step 1: Installing the node
-
-Next, clone this repository:
-
-```bash
-git clone https://github.com/blockstack/stacks-blockchain.git; cd stacks-blockchain
-```
-
-Install the Stacks node by running:
-
-```bash
-cargo build --workspace --release --bin stacks-node
-# binary will be in target/release/stacks-node
-```
-
-To install Stacks node with extra debugging symbols, run:
-
-```bash
-cargo build --workspace --bin stacks-node
-# binary will be in target/debug/stacks-node
-```
-
--> This process will take a few minutes to complete
-
-## Step 2: Running the node
-
-You're all set to run a node that connects to the testnet network.
-
-If installed without debugging symbols, run:
-
-```bash
-target/release/stacks-node xenon
-```
-
-If installed with debugging symbols, run:
-
-```bash
-target/debug/stacks-node xenon
-```
-
-The first time you run this, you'll see some logs indicating that the Rust code is being compiled. Once that's done, you should see some logs that look something like the this:
-
-```bash
-INFO [1588108047.585] [src/chainstate/stacks/index/marf.rs:732] First-ever block 0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
-```
-
-**Awesome! Your node is now connected to the testnet network.**
-
-Your node will receive new blocks when they are produced, and you can use the [Stacks Node RPC API](/references/stacks-blockchain-api#stacks-node-rpc-api) to send transactions, fetch information for contracts and accounts, and more.
-
-## Running the testnet node on Windows
-
-### Prerequisites
-
-Before you begin, check that you have the below necessary softwares installed on your PC
-
-- [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-
--> **Tip**: While installing the Microsoft Visual Studio Build tools using the above link, select the C++ Build tools option when prompted.
-![C++ Build Tools](/images/C++BuildTools.png)
-
-- [NodeJs](https://nodejs.org/en/download/).
-- [Git](https://git-scm.com/downloads).
-
-#### Optional Dependencies
-
-- [Python](https://www.python.org/downloads/).
-- [Rust](https://www.rust-lang.org/tools/install).
-
-### Download the Binary and run the follower node
-
--> **Note**: Please make sure to download the new Binary and follow the below steps as and when a [new release build](https://github.com/blockstack/stacks-blockchain/releases/latest) is available.
-
-First, Visit the [Stacks Github releases repo](https://github.com/blockstack/stacks-blockchain/releases/latest). From the various binary list, click to download the Windows binary.Refer the image below.
-![BinaryList](/images/mining-windows.png)
-
-Next, click on save file and Press **Ok** in the popup window.
-![Windowspopup](/images/mining-windows-popup.png)
-
-Once saved, Extract the binary. Open the command prompt **from the folder where binary is extracted** and execute the below command:
-
-```bash
-stacks-node xenon
-# This command will start the testnet follower node.
-```
-
--> **Note** : While starting the node for the first time, windows defender will pop up with a message to allow access. If so, allow access to run the node.
-![Windows Defender](/images/windows-defender.png)
-
-To execute Stacks node with extra debugging enabled, run:
-
-```bash
-set RUST_BACKTRACE=full
-set BLOCKSTACK_DEBUG=1
-stacks-node xenon
-# This command will execute the binary and start the follower node with debug enabled.
-```
-
-The first time you run this, you'll see some logs indicating that the Rust code is being compiled. Once that's done, you should see some logs that look something like the this:
-
-```bash
-INFO [1588108047.585] [src/chainstate/stacks/index/marf.rs:732] First-ever block 0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
-```
-
-**Awesome! Your node is now connected to the testnet network.**
-
-## Optional: Running with Docker
-
-Alternatively, you can run the testnet node with Docker.
-
--> Ensure you have [Docker](https://docs.docker.com/get-docker/) installed on your machine.
-
--> The ENV VARS `RUST_BACKTRACE` and `BLOCKSTACK_DEBUG` are optional. If removed, debug logs will be disabled
-
-```bash
-docker run -d \
-  --name stacks_follower \
-  --rm \
-  -e RUST_BACKTRACE="full" \
-  -e BLOCKSTACK_DEBUG="1" \
+```sh
+docker run -d --rm \
+  --name stacks-blockchain \
+  -v $(pwd)/persistent-data/stacks-blockchain/testnet:/root/stacks-node/data \
   -p 20443:20443 \
   -p 20444:20444 \
-  blockstack/stacks-blockchain:latest \
+  blockstack/stacks-blockchain \
 /bin/stacks-node xenon
 ```
 
--> The ENV VARS `RUST_BACKTRACE` and `BLOCKSTACK_DEBUG` are optional. If removed, debug logs will be disabled
+You can verify the running [`stacks-blockchain`][] container with the command:
 
-You can review the node logs with this command:
-
-```bash
-docker logs -f stacks_follower
+```sh
+docker ps --filter name=stacks-blockchain
 ```
 
-## Optional: Running in Kubernetes with Helm
+## Step 3: verifying the services
 
-In addition, you're also able to run a testnet node in a Kubernetes cluster using the [stacks-blockchain Helm chart](https://github.com/blockstack/stacks-blockchain/tree/master/deployment/helm/stacks-blockchain).
+-> The initial burnchain header sync can take several minutes, until this is done the following commands will not work
 
-Ensure you have the following prerequisites installed on your machine:
+To verify the [`stacks-blockchain`][] burnchain header sync progress:
 
-- [minikube](https://minikube.sigs.k8s.io/docs/start/) (Only needed if standing up a local Kubernetes cluster)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [helm](https://helm.sh/docs/intro/install/)
-
-To install the chart with the release name `my-release` and run the node as a follower:
-
-```bash
-minikube start # Only run this if standing up a local Kubernetes cluster
-helm repo add blockstack https://charts.blockstack.xyz
-helm install my-release blockstack/stacks-blockchain
+```sh
+docker logs stacks-blockchain
 ```
 
-You can review the node logs with this command:
+The output should be similar to the following:
 
-```bash
-kubectl logs -l app.kubernetes.io/name=stacks-blockchain
+```
+INFO [1626290705.886954] [src/burnchains/bitcoin/spv.rs:926] [main] Syncing Bitcoin headers: 1.2% (8000 out of 2034380)
+INFO [1626290748.103291] [src/burnchains/bitcoin/spv.rs:926] [main] Syncing Bitcoin headers: 1.4% (10000 out of 2034380)
+INFO [1626290776.956535] [src/burnchains/bitcoin/spv.rs:926] [main] Syncing Bitcoin headers: 1.7% (12000 out of 2034380)
 ```
 
-For more information on the Helm chart and configuration options, please refer to the [chart's homepage](https://github.com/blockstack/stacks-blockchain/tree/master/deployment/helm/stacks-blockchain).
+To verify the [`stacks-blockchain`][] tip height is progressing use the following command:
 
-## Optional: Mining Stacks token
+```sh
+curl -sL localhost:20443/v2/info | jq
+```
 
-Now that you have a running testnet node, you can easily set up a miner.
+If the instance is running you should recieve terminal output similar to the following:
 
-[@page-reference | inline]
-| /start-mining
+```json
+{
+  "peer_version": 4207599105,
+  "pox_consensus": "12f7fa85e5099755a00b7eaecded1aa27af61748",
+  "burn_block_height": 2034380,
+  "stable_pox_consensus": "5cc4e0403ff6a1a4bd17dae9600c7c13d0b10bdf",
+  "stable_burn_block_height": 2034373,
+  "server_version": "stacks-node 2.0.11.2.0-rc1 (develop:7b6d3ee+, release build, linux [x86_64])",
+  "network_id": 2147483648,
+  "parent_network_id": 118034699,
+  "stacks_tip_height": 509,
+  "stacks_tip": "e0ee952e9891709d196080ca638ad07e6146d4c362e6afe4bb46f42d5fe584e8",
+  "stacks_tip_consensus_hash": "12f7fa85e5099755a00b7eaecded1aa27af61748",
+  "genesis_chainstate_hash": "74237aa39aa50a83de11a4f53e9d3bb7d43461d1de9873f402e5453ae60bc59b",
+  "unanchored_tip": "32bc86590f11504f17904ee7f5cb05bcf71a68a35f0bb3bc2d31aca726090842",
+  "unanchored_seq": 0,
+  "exit_at_block_height": null
+}
+```
+
+## Stopping the testnet node
+
+Use the following commands to stop the local testnet node:
+
+```sh
+docker stop stacks-blockchain
+```
+
+## Additional reading
+
+- [Running an API instance with Docker][]
+  [running a mainnet node with docker]: /understand-stacks/running-mainnet-node
+  [running an api instance with docker]: /understand-stacks/running-api-node
+  [`stacks-blockchain`]: https://github.com/blockstack/stacks-blockchain

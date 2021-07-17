@@ -1,15 +1,20 @@
 ---
-title: Write smart contracts
+title: Clarity overview
 description: Overview and guides for getting started with Clarity
 images:
-  large: /images/pages/write-smart-contracts.svg
-  sm: /images/pages/write-smart-contracts-sm.svg
+  large: /images/contract.svg
+  sm: /images/contract.svg
 ---
 
 ## Introduction
 
 Clarity is a programming language for writing smart contracts on the Stacks 2.0 blockchain. It supports programmatic
 control over digital assets.
+
+Prefer to jump right in? Get started with the Hello World tutorial:
+
+[@page-reference | inline]
+| /write-smart-contracts/hello-world-tutorial
 
 ## Smart contracts
 
@@ -22,16 +27,18 @@ Because smart contracts are programs that exist in a blockchain, anyone can quer
 to execute them. A smart contract execution can result in new transactions being written to the blockchain.
 
 Apps can take advantage of smart contracts to manage a global state that is visible to the public. Anyone can audit the
-blockchain in order to independently verify that an app's global shared state has been managed correctly according to the smart contract's rules.
+blockchain to independently verify that an app's global shared state has been managed correctly according to the smart contract's rules.
+
+There is a [Clarity Visual Studio Code plugin][] available for syntax assistance and debugging.
 
 ## Use cases
 
 Not every decentralized application requires smart contracts, but Clarity unlocks interesting capabilities for
 decentralized applications. Examples of use cases include, but are not limited to:
 
-- Access control (e.g. pay to access)
-- Non-fungible (e.g. collectibles) and fungible tokens (e.g. stablecoins)
-- Business model templates (e.g. subscriptions)
+- Access control (for example pay to access)
+- Non-fungible (for example collectibles) and fungible tokens (for example stablecoins)
+- Business model templates (for example subscriptions)
 - App-specific blockchains
 - Decentralized Autonomous Organizations
 
@@ -43,9 +50,9 @@ Clarity differs from most other smart contract languages in two essential ways:
 - The language is decidable (not Turing complete)
 
 Using an interpreted language ensures that the executed code is human-readable and auditable. A decidable language
-like Clarity makes it possible to determine precisely which code is going to be executed, for any function.
+like Clarity makes it possible to determine precisely which code is executed, for any function.
 
-A Clarity smart contract is composed of two parts &mdash; a data space and a set of functions. Only the associated
+A Clarity smart contract consists of two parts, a data space and a set of functions. Only the associated
 smart contract may modify its corresponding data space on the blockchain. Functions may be private and thus callable
 only from within the smart contract, or public and thus callable from other contracts. Users call smart contracts'
 public functions by broadcasting a transaction on the blockchain which invokes the public function. Contracts
@@ -55,15 +62,20 @@ Note some of the key Clarity language rules and limitations.
 
 - The only primitive types are booleans, integers, buffers, and principals.
 - Recursion is illegal and there are no anonymous functions.
-- Looping may only be performed via `map`, `filter`, or `fold`.
+- Looping is only performed via `map`, `filter`, or `fold`.
 - There is support for lists, however, the only variable length lists in the language appear as function inputs; there is no support for list operations like append or join.
 - Variables are immutable.
 
-## Learning Clarity
+## Try a tutorial
 
-The tutorials are ordered from "beginner" to "advanced." Start with the [Hello World tutorial](/write-smart-contracts/hello-world-tutorial),
-then learn how to construct [a counter](/write-smart-contracts/counter-tutorial), and finally, learn how to
-[test your smart contracts](/write-smart-contracts/testing-contracts) using Mocha.
+[@page-reference | grid]
+| /write-smart-contracts/hello-world-tutorial, /write-smart-contracts/counter-tutorial, /write-smart-contracts/billboard-tutorial
 
-Once you've got the hang of the general workflow, environment, and language syntax, you should be ready to start writing
-contracts, referring to the [Clarity language reference](/references/language-overview) as you go.
+## Explore more
+
+For language details and references, see the following:
+
+[@page-reference | grid]
+| /write-smart-contracts/principals, /write-smart-contracts/values, /references/language-overview
+
+[clarity visual studio code plugin]: https://marketplace.visualstudio.com/items?itemName=HiroSystems.clarity-lsp

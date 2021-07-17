@@ -26,16 +26,22 @@ This guide helps you understand how to set up and run a mocknet for local develo
   git clone https://github.com/blockstack/stacks-local-dev ./stacks-local-dev && cd ./stacks-local-dev
 ```
 
-2. Start the Mocknet:
+2. Copy sample.env to .env:
 
 ```bash
-docker-compose up -d
+  cp sample.env .env
 ```
 
-3. Stop the Mocknet:
+3. Start the Mocknet:
 
 ```bash
-docker-compose down
+./manage.sh mocknet up
+```
+
+4. Stop the Mocknet:
+
+```bash
+./manage.sh mocknet down
 ```
 
 ## Env Vars
@@ -87,23 +93,7 @@ STACKS_FOLLOWER_MEM=128M
 
 ### Bitcoin
 
-By default, we're using the bitcoin node operated by PBC.
-
-You're welcome to to use any bitcoin testnet/regtest node you'd prefer by changing the following variables in the [`.env`](https://github.com/blockstack/stacks-local-dev/blob/master/.env) file:
-
-```bash
-BTC_RPC_PORT=18443
-BTC_P2P_PORT=18443
-BTC_HOST=bitcoind.blockstack.org
-BTC_PW=blockstacksystem
-BTC_USER=blockstack
-```
-
--> There is an important env var related here: `BTC_FAUCET_PK`. This will have to be updated if you use a different btc node. For the server defined above, this is already setup - using a different node would require you to set this up manually.
-
-```bash
-BTC_FAUCET_PK=8b5c692c6583d5dca70102bb4365b23b40aba9b5a3f32404a1d31bc09d855d9b
-```
+Mocknet does not require any settings for bitcoin
 
 ### Postgres
 
@@ -147,60 +137,19 @@ You can also run the following at anytime to ensure the local images are up to d
 docker-compose pull
 ```
 
-### Disable Mocknet explorer
-
-Mocknet explorer is set to start by default.
-
-However, if you'd prefer to not run this service you can easily disable it.
-The section of the [`docker-compose.yaml`](https://github.com/blockstack/stacks-local-dev/blob/master/docker-compose.yaml) file looks like this:
-
-```yaml
-explorer:
-  image: ${EXPLORER_IMAGE}
-  container_name: ${EXPLORER_NAME}
-  restart: unless-stopped
-  cpus: ${EXPLORER_CPU}
-  mem_reservation: ${EXPLORER_MEM}
-  ports:
-    - ${EXPLORER_PORT_LOCAL}:${EXPLORER_PORT}
-  environment:
-    - MOCKNET_API_SERVER=${EXPLORER_MOCKNET_API_SERVER}:${API_STACKS_BLOCKCHAIN_API_PORT}
-    - TESTNET_API_SERVER=${EXPLORER_TESTNET_API_SERVER}:${API_STACKS_BLOCKCHAIN_API_PORT}
-    - API_SERVER=${EXPLORER_API_SERVER}:${API_STACKS_BLOCKCHAIN_API_PORT}
-    - NODE_ENV=${EXPLORER_NODE_ENV}
-  networks:
-    - mocknet
-  depends_on:
-    - api
-```
-
-To disable this service, simply comment the section with `#`
-
-i.e.
-
-```yaml
-#  explorer:
-#    image: ${EXPLORER_IMAGE}
-#    container_name: ${EXPLORER_NAME}
-```
-
 ### Services Running in Mocknet
 
 **docker-compose Mocknet service names**:
 
-- miner
 - follower
 - api
 - postgres
-- explorer
 
 **Docker container names**:
 
-- mocknet_stacks-node-miner
 - mocknet_stacks-node-follower
 - mocknet_stacks-node-api
 - mocknet_postgres
-- mocknet_explorer
 
 #### Starting Mocknet Services
 
@@ -252,14 +201,6 @@ docker logs -f <docker container name>
 
 ## Accessing the services
 
-**stacks-node-miner**:
-
-- Ports `20443-20444` are exposed to `localhost`
-
-```bash
-curl localhost:20443/v2/info | jq
-```
-
 **stacks-node-follower**:
 
 - Ports `20443-20444` are **only** exposed to the `mocknet` docker network.
@@ -280,18 +221,13 @@ curl localhost:3999/v2/info | jq
 export PGPASSWORD='postgres' && psql --host localhost -p 5432 -U postgres -d stacks_node_api
 ```
 
-**explorer**:
-
-- Port `3000` is exposed to `localhost`
-- Open a browser to [http://localhost:3000](http://localhost:3000)
-
 ## Potential issues
 
 ### Port already in use
 
 If you have a port conflict, typically this means you already have a process using that same port.
 
-To resolve, find the port you have in use (i.e. `5432` and edit the [`.env`](https://github.com/blockstack/stacks-local-dev/blob/master/.env) file to use the new port)
+To resolve, find the port you have in use (for example, `5432` and edit the [`.env`](https://github.com/blockstack/stacks-local-dev/blob/master/.env) file to use the new port)
 
 ```bash
 netstat -anl | grep 5432
@@ -301,3 +237,15 @@ tcp46      0      0  *.5432                 *.*                    LISTEN
 ### Containers not starting
 
 Occasionally, docker can get **stuck** and not allow new containers to start. If this happens, simply restart your docker daemon and try again.
+
+### BNS username not found
+
+The mocknet is launched without the import of Stacks 1.0 name, only the test genesis chain state is imported. To change that comment out the corresponding line in `stacks-node-follower/Config.toml.template` like this:
+
+```
+# use_test_genesis_chainstate = true
+```
+
+### panic on launch
+
+Verify that the path of the config file is correct in the `.env` file, in particular on Windows OS the slash (`/`) in path names can cause errors.

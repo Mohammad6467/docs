@@ -1,6 +1,10 @@
 ---
 title: Transactions
 description: Guide to Stacks 2.0 transactions
+icon: TestnetIcon
+images:
+  large: /images/transaction-signing.svg
+  sm: /images/transaction-signing.svg
 ---
 
 ## Introduction
@@ -12,7 +16,7 @@ If you want to jump right in and broadcast your first transaction, try this tuto
 [@page-reference | inline]
 | /understand-stacks/sending-tokens
 
--> The information on this page is based on a design proposal. You can find more conceptual details in this document: [SIP 005: Blocks, Transaction, Accounts](https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-005-blocks-and-transactions.md).
+-> The information on this page is based on a design proposal. You can find more conceptual details in this document: [SIP 005: Blocks, Transaction, Accounts](https://github.com/stacksgov/sips/blob/main/sips/sip-005/sip-005-blocks-and-transactions.md).
 
 ## Lifecycle
 
@@ -23,7 +27,7 @@ Transactions go through phases before being finally confirmed, and available for
 - **Generate**: Transactions are assembled according to the encoding specification.
 - **Validate and sign**: Transactions are validated to confirm they are well-formed. Required signatures are filled in.
 - **Broadcast**: Transactions are sent to a node.
-- **Register**: A miner receives transactions, verifies, and adds them to the ["mempool"](https://academy.binance.com/glossary/mempool), a holding area for all the pending transactions.
+- **Register**: A miner receives transactions, verifies, and adds them to the ["mempool,"](https://academy.binance.com/glossary/mempool) a holding area for all the pending transactions.
 - **Process**: Miners review the mempool and select transactions for the next block to be mined. Depending on the transaction type, different actions can happen during this step. For example, post-conditions could be verified for a token transfer, smart-contract defined tokens could be minted, or an attempt to call an existing smart contract method could be made.
 - **Confirm**: Miners successfully mine blocks with a set of transactions. The transactions inside are successfully propagated to the network.
 
@@ -47,6 +51,36 @@ A sample of each transaction type can be found in the [Stacks Blockchain API res
 
 ~> Read-only contract call calls do **not** require transactions. Read more about it in the [network guide](/understand-stacks/network#read-only-function-calls).
 
+## Anchor mode
+
+Transactions can be mined either in an anchor block or in a [microblock](/understand-stacks/microblocks). If microblocks
+are selected, the transaction can be confirmed with a lower latency than the anchor block time.
+
+The anchor mode enum has three options:
+
+- `OnChainOnly` The transaction MUST be included in an anchored block
+- `OffChainOnly`: The transaction MUST be included in a microblock
+- `Any`: The leader can choose where to include the transaction
+
+Here is an example where the transaction must be included in a microblock:
+
+```js
+import { AnchorMode, makeSTXTokenTransfer } from '@stacks/transactions';
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
+
+const BigNum = require('bn.js');
+
+const txOptions = {
+  recipient: 'SP3FGQ8Z7JY9BWYZ5WM53E0M9NK7WHJF0691NZ159',
+  amount: new BigNum(12345),
+  senderKey: 'b244296d5907de9864c0b0d51f98a13c52890be0404e83f273144cd5b9960eed01',
+  network: new StacksTestnet(), // for mainnet, use `StacksMainnet()`
+  anchorMode: AnchorMode.OffChainOnly, // must be included in a microblock
+};
+
+const transaction = await makeSTXTokenTransfer(txOptions);
+```
+
 ## Post-conditions
 
 Transaction post-conditions are a feature meant to limit the damage malicious smart contract developers and smart contract bugs can do in terms of destroying a user's assets. Post-conditions are executed whenever a contract is instantiated or a public method of an existing contract is executed. Whenever a post-condition fails, a transaction will be forced to abort.
@@ -55,14 +89,14 @@ Post-conditions are meant to be added by the user (or by the user's wallet softw
 
 ### Attributes
 
-Each transaction includes a field that describes zero or more post-conditions that must all be true when the transaction finishes running. A post-condition includes the following information:
+Each transaction includes a field that describes zero or more post-conditions that must all be true when the transaction finishes running. The post-condition describes only properties of the owner of the asset before the transaction happend. For a transfer transaction, the post-condition is about the sender, for a burn transaction, the post-condition is about the previous owner. A post-condition includes the following information:
 
-| **Attribute**                                  | **Sample**                                  | **Description**                                                                           |
-| ---------------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [Principal](/write-smart-contracts/principals) | `SP2ZD731ANQZT6J4K3F5N8A40ZXWXC1XFXHVVQFKE` | Sender of the transaction, can be a Stacks address or a contract                          |
-| Asset name                                     | `STX`                                       | Asset to apply conditions to (could be Stacks, fungible, or non-fungible tokens)          |
-| Comparator                                     | `>=`                                        | Compare operation to be applied (could define "how much" or "whether or not")             |
-| Literal                                        | `1000000`                                   | Integer or boolean value used to compare instances of the asset against via the condition |
+| **Attribute**                                  | **Sample**                                  | **Description**                                                                                  |
+| ---------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [Principal](/write-smart-contracts/principals) | `SP2ZD731ANQZT6J4K3F5N8A40ZXWXC1XFXHVVQFKE` | original owner of the asset, can be a Stacks address or a contract                               |
+| Asset id                                       | `STX`                                       | Asset to apply conditions to (could be Stacks, fungible, or non-fungible tokens)                 |
+| Comparator                                     | `>=`                                        | Compare operation to be applied (could define "how much" or "whether or not the asset is owned") |
+| Literal                                        | `1000000`                                   | Integer or boolean value used to compare instances of the asset against via the condition        |
 
 ### Evaluation modes
 
@@ -77,19 +111,19 @@ Transactions can be authorized in two ways: _standard_ and _sponsored_. The auth
 
 **Sponsored transactions** enable developers and/or infrastructure operators to pay for users to call into their smart contracts, even if users do not have the Stacks (STX) to do so.
 
-The signing flow for sponsored transactions would be to have the user first sign the transaction with their origin account with the intent of it being sponsored (i.e. the user must explicitly allow a sponsor to sign), and then have the sponsor sign with their paying account to pay for the user's transaction fee.
+The signing flow for sponsored transactions would be to have the user first sign the transaction with their origin account with the intent of it being sponsored (that is, the user must explicitly allow a sponsor to sign), and then have the sponsor sign with their paying account to pay for the user's transaction fee.
 
 ## Encoding
 
 A transaction includes the following information. Multiple-byte fields are encoded as big-endian.
 
-| **Type**        | **Description**                                                                                                                                                                                                           |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Version number  | Network version. `0x80` for testnet, `0x0` for mainnet                                                                                                                                                                    |
-| Chain ID        | Chain instance ID. `0x80000000` for testnet, `0x00000001` for mainnet                                                                                                                                                     |
-| Authorization   | Type of authorization (`0x04` for standard, `0x05` for sponsored) and [spending conditions](https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-005-blocks-and-transactions.md#transaction-authorization) |
-| Post-conditions | List of post-conditions, each including a [type ID and variable-length condition body](https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-005-blocks-and-transactions.md#transaction-post-conditions-1)  |
-| Payload         | Transaction type and variable-length [payload](https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-005-blocks-and-transactions.md#transaction-payloads-1)                                                 |
+| **Type**        | **Description**                                                                                                                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Version number  | Network version. `0x80` for testnet, `0x0` for mainnet                                                                                                                                                             |
+| Chain ID        | Chain instance ID. `0x80000000` for testnet, `0x00000001` for mainnet                                                                                                                                              |
+| Authorization   | Type of authorization (`0x04` for standard, `0x05` for sponsored) and [spending conditions](https://github.com/stacksgov/sips/blob/main/sips/sip-005/sip-005-blocks-and-transactions.md#transaction-authorization) |
+| Post-conditions | List of post-conditions, each including a [type ID and variable-length condition body](https://github.com/stacksgov/sips/blob/main/sips/sip-005/sip-005-blocks-and-transactions.md#transaction-post-conditions-1)  |
+| Payload         | Transaction type and variable-length [payload](https://github.com/stacksgov/sips/blob/main/sips/sip-005/sip-005-blocks-and-transactions.md#transaction-payloads-1)                                                 |
 
 ## Construction
 
@@ -107,7 +141,7 @@ When constructing transactions, it is required to set the network the transactio
 
 ```js
 import { makeSTXTokenTransfer } from '@stacks/transactions';
-import { StacksTestnet } from '@stacks/network';
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
 
 const BigNum = require('bn.js');
 
@@ -115,7 +149,7 @@ const txOptions = {
   recipient: 'SP3FGQ8Z7JY9BWYZ5WM53E0M9NK7WHJF0691NZ159',
   amount: new BigNum(12345),
   senderKey: 'b244296d5907de9864c0b0d51f98a13c52890be0404e83f273144cd5b9960eed01',
-  network: new StacksTestnet(),
+  network: new StacksTestnet(), // for mainnet, use `StacksMainnet()`
   memo: 'test memo',
   nonce: new BigNum(0), // set a nonce manually if you don't want builder to fetch from a Stacks node
   fee: new BigNum(200), // set a tx fee if you don't want the builder to estimate
@@ -130,14 +164,14 @@ const transaction = await makeSTXTokenTransfer(txOptions);
 
 ```js
 import { makeContractDeploy } from '@stacks/transactions';
-import { StacksTestnet } from '@stacks/network';
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
 const BigNum = require('bn.js');
 
 const txOptions = {
   contractName: 'contract_name',
   codeBody: fs.readFileSync('/path/to/contract.clar').toString(),
   senderKey: 'b244296d5907de9864c0b0d51f98a13c52890be0404e83f273144cd5b9960eed01',
-  network: new StacksTestnet(),
+  network: new StacksTestnet(), // for mainnet, use `StacksMainnet()`
 };
 
 const transaction = await makeContractDeploy(txOptions);
@@ -147,7 +181,7 @@ const transaction = await makeContractDeploy(txOptions);
 
 ```js
 import { makeContractCall, BufferCV } from '@stacks/transactions';
-import { StacksTestnet } from '@stacks/network';
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
 
 const BigNum = require('bn.js');
 
@@ -159,7 +193,7 @@ const txOptions = {
   senderKey: 'b244296d5907de9864c0b0d51f98a13c52890be0404e83f273144cd5b9960eed01',
   // attempt to fetch this contracts interface and validate the provided functionArgs
   validateWithAbi: true,
-  network: new StacksTestnet(),
+  network: new StacksTestnet(), // for mainnet, use `StacksMainnet()`
 };
 
 const transaction = await makeContractCall(txOptions);
@@ -167,7 +201,7 @@ const transaction = await makeContractCall(txOptions);
 
 ### Clarity value types
 
-Building transactions that call functions in deployed clarity contracts requires you to construct valid Clarity Values to pass to the function as arguments. The [Clarity type system](https://github.com/blockstack/stacks-blockchain/blob/master/sip/sip-002-smart-contract-language.md#clarity-type-system) contains the following types:
+Building transactions that call functions in deployed clarity contracts requires you to construct valid Clarity Values to pass to the function as arguments. The [Clarity type system](https://github.com/stacksgov/sips/blob/main/sips/sip-002/sip-002-smart-contract-language.md#clarity-type-system) contains the following types:
 
 | Type             | Declaration                                                  | Description                                                                                                                                                                         |
 | ---------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -183,7 +217,7 @@ Building transactions that call functions in deployed clarity contracts requires
 | ASCII String     | `(define-data-var my-str (string-ascii 11) "hello world")`   | String value encoded in ASCII                                                                                                                                                       |
 | UTF-8 String     | `(define-data-var my-str (string-utf8 7) u"hello \u{1234}")` | String value encoded in UTF-8                                                                                                                                                       |
 
-The Stacks Transactions JS library contains Typescript types and classes that map to the Clarity types, in order to make it easy to construct well-typed Clarity values in Javascript. These types all extend the abstract class `ClarityValue`.
+The Stacks Transactions JS library contains TypeScript types and classes that map to the Clarity types, in order to make it easy to construct well-typed Clarity values in JavaScript. These types all extend the abstract class `ClarityValue`.
 
 Here are samples for Clarity value constructions using this library:
 
@@ -225,7 +259,7 @@ const tupCV = tupleCV({
 const l = listCV([trueCV(), falseCV()]);
 ```
 
-If you develop in Typescript, the type checker can help prevent you from creating wrongly-typed Clarity values. For example, the following code won't compile since in Clarity lists are homogeneous, meaning they can only contain values of a single type. It is important to include the type variable `BooleanCV` in this example, otherwise the typescript type checker won't know which type the list is of and won't enforce homogeneity.
+If you develop in Typescript, the type checker can help prevent you from creating wrongly typed Clarity values. For example, the following code won't compile since in Clarity lists are homogeneous, meaning they can only contain values of a single type. It is important to include the type variable `BooleanCV` in this example, otherwise the typescript type checker won't know which type the list is of and won't enforce homogeneity.
 
 ```js
 const l = listCV < BooleanCV > [trueCV(), intCV(1)];
@@ -271,7 +305,7 @@ A well-formed transaction construct is encoded in [Recursive Length Prefix ("RLP
 
 In order to broadcast transactions to and between nodes on the network, RLP data is represented in hexadecimal string (also called the **raw format**).
 
-To support an API-friendly and human-readable representation, the [Stacks Blockchain API](/references/stacks-blockchain-api) converts transactions into a JSON format.
+To support an API-friendly and human-readable representation, the [Stacks Blockchain API](/understand-stacks/stacks-blockchain-api) converts transactions into a JSON format.
 
 => [The Stacks Transactions JS library](https://github.com/blockstack/stacks.js) supports serialization of transactions.
 
@@ -300,35 +334,37 @@ When called the Stacks Blockchain API or Node RPC API, transactions returned wil
 
 ```js
 {
-  "tx_id": "0x19e25515652dad41ef675bd0670964e3d537b80ec19cf6ca6f1dd65d5bc642c6",
-  "tx_status": "success",
-  "tx_type": "token_transfer",
+  "tx_id": "0x77cb1bf0804f09ad24b4c494a6c00d5b10bb0afbb94a0d646fa9640eff338e37",
+  "nonce": 5893,
   "fee_rate": "180",
-  "sender_address": "STJTXEJPJPPVDNA9B052NSRRBGQCFNKVS178VGH1",
+  "sender_address": "STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6",
   "sponsored": false,
   "post_condition_mode": "deny",
-  "block_hash": "0x9080f6df3e0be0d6de67569330e547346a44c8ecd30d9d76b5edd1b49e2c22f6",
-  "block_height": 3190,
-  "burn_block_time": 1594227992,
+  "post_conditions": [],
+  "anchor_mode": "any",
+  "block_hash": "0xf1e54a3acd04232f1362c09d5096b095363158348303396ea5fc5092e1d8788f",
+  "parent_block_hash": "0x3de356eb5afa5d7b781f6a925d31d69d218b772ec995930b4e15d92bd15443f9",
+  "block_height": 13984,
+  "burn_block_time": 1622678407,
+  "burn_block_time_iso": "2021-06-03T00:00:07.000Z",
   "canonical": true,
-  "tx_index": 1,
-  "token_transfer": {
-    "recipient_address": "ST1RZG804V6Y0N4XHQD3ZE2GE3XSCV3VHRKMA3GB0",
-    "amount": "10000",
-    "memo": "0x00000000000000000000000000000000000000000000000000000000000000000000"
+  "tx_index": 2,
+  "tx_status": "success",
+  "tx_result": {
+    "hex": "0x0703",
+    "repr": "(ok true)"
   },
-  "events": [
-    {
-      "event_index": 0,
-      "event_type": "stx_asset",
-      "asset": {
-        "asset_event_type": "transfer",
-        "sender": "STJTXEJPJPPVDNA9B052NSRRBGQCFNKVS178VGH1",
-        "recipient": "ST1RZG804V6Y0N4XHQD3ZE2GE3XSCV3VHRKMA3GB0",
-        "amount": "10000"
-      }
-    }
-  ]
+  "microblock_hash": "",
+  "microblock_sequence": 2147483647,
+  "microblock_canonical": true,
+  "event_count": 1,
+  "events": [],
+  "tx_type": "token_transfer",
+  "token_transfer": {
+    "recipient_address": "STZ4C5RT4WH4JGRQA5E0ZF5PPSQCVY1WRB6E2CGW",
+    "amount": "500000000",
+    "memo": "0x46617563657400000000000000000000000000000000000000000000000000000000"
+  }
 }
 ```
 
@@ -351,7 +387,7 @@ console.log(deserializedTx.payload.memo.content);
 
 ## Signature and Verification
 
-Every transaction contains verifiable signature(s) that certify its authenticity. These signatures are generated by signing the transaction hash with the origin's private key. The Elliptic Curve Digital Signature Algorithm (ECDSA) is used for signing, with the curve set to secp256k1. The internal structure that encapsulates the signature is the spending condition. Spending conditions include several parameters including the public key hash, nonce, fee rate and the recoverable ECDSA signature.
+Every transaction contains verifiable signatures that certify its authenticity. These signatures are generated by signing the transaction hash with the origin's private key. The Elliptic Curve Digital Signature Algorithm (ECDSA) is used for signing, with the curve set to secp256k1. The internal structure that encapsulates the signature is the spending condition. Spending conditions include several parameters including the public key hash, nonce, fee rate and the recoverable ECDSA signature.
 
 When constructing a transaction using the JS library, you can supply the private key and signing will be completed automatically. If you would like to sign the transaction manually, use the `TransactionSigner` class.
 
@@ -386,8 +422,9 @@ A sponsored transaction is one where a second signer sets and pays the transacti
 With a serialized transaction in the [raw format](#raw-format), it can be broadcasted to the network using the [`POST /v2/transactions`](https://blockstack.github.io/stacks-blockchain-api/#operation/post_core_node_transactions) endpoint:
 
 ```bash
-curl --location --request POST 'https://stacks-node-api.blockstack.org/v2/transactions' \
---header 'Content-Type: text/plain' \
+# for mainnet, replace `testnet` with `mainnet`
+curl --location --request POST 'https://stacks-node-api.testnet.stacks.co/v2/transactions' \
+--header 'Content-Type: application/octet-stream' \
 --data-raw '<tx_raw_format>'
 ```
 
@@ -398,9 +435,41 @@ There is no explicit time constraint between the construction of a valid signed 
 - Token transfer: Nonce changed in-between construction and broadcast
 - Contract call or deploy: Block height is evaluated (with [`at-block`](/references/language-functions#at-block)) and changed in-between construction and broadcast
 
+## Mempool
+
+Once a transaction has been successfully broadcast to the network, the transaction is added to the mempool of the node
+that received the broadcast. From the [Bitcoin wiki][]: "a node's memory pool contains all 0-confirmation transactions
+across the entire network that that particular node knows about." So, the set of transactions in the mempool might be
+different for each node in the network. For example, when you query the mempool endpoints on
+`stacks-node-api.mainnet.stacks.co`, the response reflects the set of unconfirmed transactions known to the nodes that
+service that API.
+
+Miners can employ different heuristics and strategies for deciding which transactions to admit into the mempool and
+which transactions to include from the mempool when mining a block. Some transactions may be rejected outright (for
+example, if there are insufficient funds at an address) while others might be accepted into the mempool, but not mined
+into a block indefinitely (for example if fees are too low). Transactions that are admitted in the mempool but not yet
+mined are said to be "pending." The current implementation of [stacks-blockchain][] discards pending mempool
+transactions after [256 blocks][].
+
+### Best practices
+
+- **Nonce:** it's crucial that transactions use the correct nonce. Using an incorrect nonce makes it less likely that
+  the transaction is mined in a timely manner. To determine the correct nonce, query the [`accounts`][] endpoint of
+  the node you intend to broadcast your transaction to. The value of the `nonce` field of the response is the next nonce
+  that the node expects to consume for that account. Nonce starts at `0`, so the first transaction from an account should
+  be set to `nonce=0`.
+- **Transaction chaining:** even when using the correct nonce, transactions might arrive at a node out-of-order. For
+  instance, a transaction with `nonce=1` may arrive in the mempool before the `nonce=0` transaction. Stacks nodes admit
+  such out-of-order transactions in the mempool, but only up to a limit ([25 in the current implementation][]). So, you
+  should limit and chain of unconfirmed transactions from a single account to less than 25. Making this limit higher has
+  downsides, discussed in [this issue](https://github.com/blockstack/stacks-blockchain/issues/2384). If you need to send
+  more than 25 transactions per block, consider using multiple accounts or a smart-contract based approach. See
+  [this tool](https://www.npmjs.com/package/@stacks/send-many-stx-cli), for example, that allows up to 200 token
+  transfers in a single transaction.
+
 ## Querying
 
-Transactions on the Stacks 2.0 network can be queried using the [Stacks Blockchain API](/references/stacks-blockchain-api). The API exposes two interfaces, a RESTful JSON API and a WebSockets API.
+Transactions on the Stacks 2.0 network can be queried using the [Stacks Blockchain API](/understand-stacks/stacks-blockchain-api). The API exposes two interfaces, a RESTful JSON API and a WebSockets API.
 
 For convenience, a Postman Collection was created and published: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/614feab5c108d292bffa)
 
@@ -413,7 +482,8 @@ For convenience, a Postman Collection was created and published: [![Run in Postm
 Recent transactions can be obtained through the [`GET /extended/v1/tx`](https://blockstack.github.io/stacks-blockchain-api/#operation/get_transaction_list) endpoint:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/extended/v1/tx'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/extended/v1/tx'
 ```
 
 Sample response:
@@ -450,7 +520,8 @@ Sample response:
 Mempool (registered, but not processed) transactions can be obtained using the [`GET /extended/v1/tx/mempool`](https://blockstack.github.io/stacks-blockchain-api/#operation/get_mempool_transaction_list) endpoint:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/extended/v1/tx/mempool'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/extended/v1/tx/mempool'
 ```
 
 Sample response:
@@ -488,7 +559,8 @@ Sample response:
 Recent transactions can be filtered by [transaction type](/understand-stacks/transactions#types) using the `type` query parameter:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/extended/v1/tx/?type=contract_call'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/extended/v1/tx/?type=contract_call'
 ```
 
 ### Get transaction by ID
@@ -496,7 +568,8 @@ curl 'https://stacks-node-api.blockstack.org/extended/v1/tx/?type=contract_call'
 A specific transaction can be obtained using the [`GET /extended/v1/tx/<tx_id>`](https://blockstack.github.io/stacks-blockchain-api/#operation/get_transaction_by_id) endpoint:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/extended/v1/tx/<tx_id>'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/extended/v1/tx/<tx_id>'
 ```
 
 Sample response:
@@ -526,3 +599,17 @@ Sample response:
   ]
 }
 ```
+
+## Garbage Collection
+
+Broadcasted transactions will stay in the mempool for 256 blocks (~42 hours). If a transactions is not confirmed within that time, it will be removed from the mempool.
+
+!> Most transactions stay in the mempool due to nonce issues. If you see a transaction pending for an unusual time, review the nonce of the account and the transaction.
+
+If a transaction is removed from the mempool, the transaction was not processed and no changes were made to the blockchain state.
+
+[bitcoin wiki]: https://en.bitcoin.it/wiki/Vocabulary#Memory_pool
+[256 blocks]: https://github.com/blockstack/stacks-blockchain/blob/master/src/core/mempool.rs#L59
+[stacks-blockchain]: https://github.com/blockstack/stacks-blockchain
+[`accounts`]: /understand-stacks/accounts#get-stacks-stx-balance-and-nonce
+[25 in the current implementation]: https://github.com/blockstack/stacks-blockchain/blob/08c4b9d61b48b99475c0197e7e7fea50c7fb0e29/src/core/mempool.rs#L66

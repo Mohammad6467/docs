@@ -1,26 +1,35 @@
 ---
 title: Testnet
-description: Learn about testnet phases, timelines, and features
+description: Test your smart contracts and apps
 images:
   large: /images/pages/testnet.svg
   sm: /images/pages/testnet-sm.svg
 ---
 
-## Introduction
+## About testnet
 
-The Stacks 2.0 testnet is a separate blockchain, to be used for testing. It is intended for developer experimentation and not built for production-ready integrations. The testnet is frequently reset and Stacks (STX) tokens, used as fees for operations on the testnet, can be obtained for free using a [faucet](https://www.blockstack.org/testnet/faucet).
+The testnet is a separate blockchain from the Stacks mainnet analogous to a staging environnment. It's a network used by developers to test their apps, smart contracts, or changes to the protocol in a production-like environment.
+It produces blocks at roughly the same rate as mainnet; about 1 block every 10 minutes on average. The Stacks testnet is rarely reset.
 
--> Stacks (STX) tokens on the testnet are different from real tokens on the mainnet. They can be obtained at no cost through the faucet.
+## Testnet nodes
 
-With the completion of the Stacks 2.0 blockchain, a production-ready, stable version will be released as "mainnet". While work for the mainnet is in progress, the testnet reflects the most recent implementation of the Stacks 2.0 blockchain.
+If you would like to run your own testnet node, please follow these steps:
 
-## Release phases
+[@page-reference | inline]
+| /understand-stacks/running-testnet-node
 
-The work towards mainnet is split up into four sequential phases:
+## Testnet API
 
-- ✅ **Phase 1:** is a developer local setup, mono-node, assembling SIP 001, SIP 002, SIP 004 and SIP 005. With this version, developers can not only run Stacks 2.0 on their development machines, but also write, execute, and test smart contracts.
-- ✅ **Phase 2:** is the current version of our public testnet. This testnet includes SIP 003, and will be an open-membership public network, where participants will be able to validate and participate in mining testnet blocks.
-- ✅ **Phase 3:** is the most complex phase which implements consensus, mining, and stacking (earning BTC).
-- [ ] **Phase 4** is mainly focused on testing.
+The hosted [Stacks Blockchain API](/understand-stacks/stacks-blockchain-api) for the testnet is available at this base URL:
 
--> Have a look at the [Stacks 2.0 Testnet page](https://www.blockstack.org/testnet#phases) for a roadmap, including capabilities released and planned for each phase.
+```shell
+https://stacks-node-api.testnet.stacks.co/
+```
+
+### Faucet
+
+The testnet faucet provides you with free Stacks Token (STX) to test with. These are not the same as STX on mainnet and have no value. You can get STX from the faucet on the [Stacks Explorer Sandbox](https://explorer.stacks.co/sandbox/faucet?chain=testnet), or using the [API](https://blockstack.github.io/stacks-blockchain-api/#tag/Faucets).
+
+To get STX tokens from within the Explorer Sandbox, navigate to the "Faucet" tab and click on "Request STX" button. If you would like to get enough STX tokens to try out [Stacking](/understand-stacks/stacking), you should click on "I want to stack".
+
+> The Explorer Sandbox requires you to login with a Secret Key

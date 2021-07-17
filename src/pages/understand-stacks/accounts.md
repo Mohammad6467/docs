@@ -1,6 +1,10 @@
 ---
 title: Accounts
 description: Guide to Stacks 2.0 accounts
+icon: TestnetIcon
+images:
+  large: /images/pages/testnet.svg
+  sm: /images/pages/testnet-sm.svg
 ---
 
 ## Introduction
@@ -48,6 +52,8 @@ stx make_keychain -t > cli_keychain.json
   }
 }
 ```
+
+-> Check out the [Stacks CLI reference](/references/stacks-cli) for more details
 
 | Field                | Description                                                                                                                                                        |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -121,7 +127,8 @@ Full documentation available at [stacks-gen](https://github.com/psq/stacks-gen).
 STX balance and nonce can be obtained through the [`GET /v2/accounts/<stx_address>`](https://blockstack.github.io/stacks-blockchain-api/#operation/get_account_info) endpoint:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/v2/accounts/<stx_address>'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/v2/accounts/<stx_address>'
 ```
 
 Sample response:
@@ -140,7 +147,8 @@ Sample response:
 All token balances can be obtained through the [`GET /extended/v1/address/<stx_address>/balances`](https://blockstack.github.io/stacks-blockchain-api/#operation/get_account_balance) endpoint:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/extended/v1/address/<stx_address>/balances'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/extended/v1/address/<stx_address>/balances'
 ```
 
 Sample response:
@@ -164,7 +172,8 @@ Sample response:
 All asset events associated with the account can be obtained through the [`GET /extended/v1/address/<stx_address>/assets`](https://blockstack.github.io/stacks-blockchain-api/#operation/get_account_balance) endpoint:
 
 ```bash
-curl 'https://stacks-node-api.blockstack.org/extended/v1/address/<stx_address>/assets'
+# for mainnet, replace `testnet` with `mainnet`
+curl 'https://stacks-node-api.testnet.stacks.co/extended/v1/address/<stx_address>/assets'
 ```
 
 Sample response:

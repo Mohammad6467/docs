@@ -9,18 +9,53 @@ const withFonts = require('next-fonts');
 async function redirects() {
   return [
     {
+      source: '/understand-stacks/integrate-stacking',
+      destination: '/build-apps/guides/integrate-stacking',
+      permanent: true,
+    },
+    {
+      source: '/understand-stacks/integrate-stacking-delegation',
+      destination: '/build-apps/guides/integrate-stacking-delegation',
+      permanent: true,
+    },
+    {
+      source: '/build-apps/tutorials/todos',
+      destination: '/build-apps/examples/todos',
+      permanent: true,
+    },
+    {
+      source: '/build-apps/tutorials/public-registry',
+      destination: '/build-apps/examples/public-registry',
+      permanent: true,
+    },
+    {
+      source: '/build-apps/tutorials/angular',
+      destination: '/build-apps/examples/angular',
+      permanent: true,
+    },
+    {
+      source: '/ecosystem/contributing',
+      destination: '/contributing',
+      permanent: true,
+    },
+    {
       source: '/browser/todo-list.html',
-      destination: '/authentication/building-todo-app',
+      destination: '/build-apps/tutorials/todos',
       permanent: true,
     },
     {
       source: '/develop/zero_to_dapp_1.html',
-      destination: '/authentication/building-todo-app',
+      destination: '/build-apps/tutorials/todos',
       permanent: true,
     },
     {
       source: '/browser/hello-blockstack.html',
-      destination: '/authentication/building-todo-app',
+      destination: '/build-apps/tutorials/todos',
+      permanent: true,
+    },
+    {
+      source: '/authentication/building-todo-app',
+      destination: '/build-apps/tutorials/todos',
       permanent: true,
     },
     {
@@ -39,8 +74,36 @@ async function redirects() {
       permanent: true,
     },
     { source: '/develop/profiles.html', destination: '/authentication/profiles', permanent: true },
-    { source: '/storage/overview.html', destination: '/data-storage/overview', permanent: true },
-    { source: '/develop/storage.html', destination: '/data-storage/overview', permanent: true },
+    {
+      source: '/storage/overview.html',
+      destination: '/build-apps/references/gaia',
+      permanent: true,
+    },
+    {
+      source: '/develop/storage.html',
+      destination: '/build-apps/guides/data-storage',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/storage-write-read',
+      destination: '/build-apps/guides/data-storage',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/storage-guide',
+      destination: '/build-apps/guides/data-storage',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/overview',
+      destination: '/build-apps/references/gaia',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/authentication',
+      destination: '/build-apps/guides/authentication',
+      permanent: true,
+    },
     {
       source: '/storage/authentication.html',
       destination: '/data-storage/authentication',
@@ -77,6 +140,11 @@ async function redirects() {
       permanent: true,
     },
     {
+      source: '/authentication/building-with-angular',
+      destination: '/build-apps/tutorials/angular',
+      permanent: true,
+    },
+    {
       source: '/core/smart/overview.html',
       destination: '/write-smart-contracts/overview',
       permanent: true,
@@ -98,7 +166,7 @@ async function redirects() {
     },
     {
       source: '/develop/connect/use-with-clarity.html',
-      destination: '/write-smart-contracts/signing-transactions',
+      destination: '/build-apps/guides/transaction-signing',
       permanent: true,
     },
     {
@@ -118,32 +186,32 @@ async function redirects() {
     },
     {
       source: '/core/naming/introduction.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/architecture.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/namespaces.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/comparison.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/tutorial_subdomains.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/search.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
@@ -158,47 +226,62 @@ async function redirects() {
     },
     {
       source: '/core/naming/pickname.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/creationhowto.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/resolving.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/register.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/manage.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/subdomains.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/core/naming/forks.html',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/develop/collections.html',
-      destination: '/data-storage/collections',
+      destination: '/build-apps/collections/overview',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/collections',
+      destination: '/build-apps/collections/overview',
       permanent: true,
     },
     {
       source: '/develop/collection-type.html',
-      destination: '/data-storage/collections-type',
+      destination: '/build-apps/collections/types',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/collection-type',
+      destination: '/build-apps/collections/types',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/collections-type',
+      destination: '/build-apps/collections/types',
       permanent: true,
     },
     {
@@ -317,10 +400,11 @@ async function redirects() {
     },
     {
       source: '/org/tokenholders.html',
-      destination: '/ecosystem/stacks-token-holders',
+      destination: '/references/faqs/stacks-token',
       permanent: true,
     },
-    { source: '/core/cmdLineRef.html', destination: '/references/blockstack-cli', permanent: true },
+    { source: '/core/cmdLineRef.html', destination: '/references/stacks-cli', permanent: true },
+    { source: '/references/stx ', destination: '/references/stacks-cli', permanent: true },
     {
       source: '/core/smart/clarityref',
       destination: '/references/language-clarity',
@@ -395,7 +479,17 @@ async function redirects() {
     },
     {
       source: '/develop/overview_auth.html',
-      destination: '/authentication/overview',
+      destination: '/build-apps/guides/authentication',
+      permanent: true,
+    },
+    {
+      source: '/authentication/overview',
+      destination: '/build-apps/guides/authentication',
+      permanent: true,
+    },
+    {
+      source: '/build-apps',
+      destination: '/build-apps/overview',
       permanent: true,
     },
     { source: '/org/terms.html', destination: '/references/glossary', permanent: true },
@@ -412,13 +506,23 @@ async function redirects() {
       destination: '/write-smart-contracts/overview',
       permanent: true,
     },
-    { source: '/data-storage', destination: '/data-storage/overview', permanent: true },
-    { source: '/data-indexing', destination: '/data-storage/indexing-overview', permanent: true },
+    { source: '/data-storage', destination: '/build-apps/references/gaia', permanent: true },
+    {
+      source: '/data-storage/overview',
+      destination: '/build-apps/references/gaia',
+      permanent: true,
+    },
+    { source: '/data-indexing', destination: '/build-apps/indexing/overview', permanent: true },
+    {
+      source: '/data-storage/indexing-overview',
+      destination: '/build-apps/indexing/overview',
+      permanent: true,
+    },
     { source: '/stacks-wallet', destination: '/stacks-wallet/overview', permanent: true },
-    { source: '/naming-services', destination: '/technology/naming-system/', permanent: true },
-    { source: '/naming-system', destination: '/technology/naming-system/', permanent: true },
+    { source: '/naming-services', destination: '/build-apps/references/bns', permanent: true },
+    { source: '/naming-system', destination: '/build-apps/references/bns', permanent: true },
     { source: '/storage-hubs', destination: '/storage-hubs/overview', permanent: true },
-    { source: '/references', destination: '/references/blockstack-cli', permanent: true },
+    { source: '/references', destination: '/references/stacks-cli', permanent: true },
     { source: '/ecosystem', destination: '/ecosystem/overview', permanent: true },
     {
       source: '/stacks-blockchain/testnet-node',
@@ -456,6 +560,11 @@ async function redirects() {
       permanent: true,
     },
     {
+      source: '/stacks-blockchain/integrate-stacking',
+      destination: '/understand-stacks/integrate-stacking',
+      permanent: true,
+    },
+    {
       source: '/understand-stacks/atlas/usage',
       destination: '/understand-stacks/atlas-usage',
       permanent: true,
@@ -463,27 +572,52 @@ async function redirects() {
     // data indexing changes
     {
       source: '/data-indexing/overview',
-      destination: '/data-storage/indexing-overview',
+      destination: '/build-apps/indexing/overview',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/indexing-overview',
+      destination: '/build-apps/indexing/overview',
       permanent: true,
     },
     {
       source: '/data-indexing/integrate',
-      destination: '/data-storage/integrate-indexing',
+      destination: '/build-apps/tutorials/indexing',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/integrate-indexing',
+      destination: '/build-apps/tutorials/indexing',
       permanent: true,
     },
     {
       source: '/data-indexing/models',
-      destination: '/data-storage/indexing-models',
+      destination: '/build-apps/indexing/models',
       permanent: true,
     },
     {
       source: '/data-indexing/collaborate',
-      destination: '/data-storage/indexing-collaborate',
+      destination: '/build-apps/indexing/collaboration',
       permanent: true,
     },
     {
       source: '/data-indexing/server-extras',
-      destination: '/data-storage/indexing-server-extras',
+      destination: '/build-apps/indexing/server',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/indexing-models',
+      destination: '/build-apps/indexing/models',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/indexing-collaborate',
+      destination: '/build-apps/indexing/collaboration',
+      permanent: true,
+    },
+    {
+      source: '/data-storage/indexing-server-extras',
+      destination: '/build-apps/indexing/server',
       permanent: true,
     },
     {
@@ -493,88 +627,77 @@ async function redirects() {
     },
     {
       source: '/naming-services/build-profile-search-index',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
-      source: '/naming-services/build-profile-search-index',
-      destination: '/technology/naming-system/',
+      source: '/technology/naming-system',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
-    {
-      source: '/naming-services/build-profile-search-index',
-      destination: '/technology/naming-system/',
-      permanent: true,
-    },
-    {
-      source: '/naming-services/build-profile-search-index',
-      destination: '/technology/naming-system/',
-      permanent: true,
-    },
-
     {
       source: '/naming-services/architecture',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/choose-name',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/comparison',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/create-namespace',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/did',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/forks',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/manage-names',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/namespaces',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/overview',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/register-name',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/resolve-name',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/subdomains',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
       source: '/naming-services/subdomains-tutorial',
-      destination: '/technology/naming-system/',
+      destination: '/build-apps/references/bns',
       permanent: true,
     },
     {
@@ -597,6 +720,201 @@ async function redirects() {
       destination: '/references/stacks-blockchain-api',
       permanent: true,
     },
+    {
+      source: '/mining',
+      destination: '/start-mining/mainnet',
+      permanent: true,
+    },
+    {
+      source: '/start-mining',
+      destination: '/start-mining/mainnet',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/overview',
+      destination: '/write-smart-contracts/overview',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/hello-world-tutorial',
+      destination: '/write-smart-contracts/hello-world-tutorial',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/counter-tutorial',
+      destination: '/write-smart-contracts/counter-tutorial',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/testing-contracts',
+      destination: '/write-smart-contracts/testing-contracts',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/signing-transactions',
+      destination: '/build-apps/guides/transaction-signing',
+      permanent: true,
+    },
+    {
+      source: '/write-smart-contracts/signing-transactions',
+      destination: '/build-apps/guides/transaction-signing',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/principals',
+      destination: '/write-smart-contracts/principals',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/running-testnet-node',
+      destination: '/understand-stacks/running-testnet-node',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/cli-wallet-quickstart',
+      destination: '/write-smart-contracts/cli-wallet-quickstart',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/atlas-overview',
+      destination: '/understand-stacks/atlas-overview',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/atlas-how-it-works',
+      destination: '/understand-stacks/atlas-how-it-works',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/atlas-usage',
+      destination: '/understand-stacks/atlas-usage',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/wire-format',
+      destination: '/understand-stacks/wire-format',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/overview',
+      destination: '/understand-stacks/overview',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/testnet',
+      destination: '/understand-stacks/testnet',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/proof-of-transfer',
+      destination: '/understand-stacks/proof-of-transfer',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/mining',
+      destination: '/understand-stacks/mining',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/accounts',
+      destination: '/understand-stacks/accounts',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/transactions',
+      destination: '/understand-stacks/transactions',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/network',
+      destination: '/understand-stacks/network',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/stacking',
+      destination: '/understand-stacks/stacking',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/local-development',
+      destination: '/understand-stacks/local-development',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/technical-specs',
+      destination: '/understand-stacks/technical-specs',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/managing-accounts',
+      destination: '/understand-stacks/managing-accounts',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/sending-tokens',
+      destination: '/understand-stacks/sending-tokens',
+      permanent: true,
+    },
+    {
+      source: '/build-an-app',
+      destination: '/build-apps',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/clarity-values',
+      destination: '/write-smart-contracts/values',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/public-registry-tutorial',
+      destination: '/build-apps/tutorials/public-registry',
+      permanent: true,
+    },
+    {
+      source: '/smart-contracts/public-registry-tutorial',
+      destination: '/build-apps/tutorials/public-registry',
+      permanent: true,
+    },
+    {
+      source: '/write-smart-contracts/public-registry-tutorial',
+      destination: '/build-apps/tutorials/public-registry',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/stacks-1.0-info',
+      destination: '/understand-stacks/stacks-1.0-info',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/best-practices',
+      destination: '/understand-stacks/best-practices',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/wire-format',
+      destination: '/understand-stacks/wire-format',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/install-api',
+      destination: '/understand-stacks/stacks-1.0-info',
+      permanent: true,
+    },
+    {
+      source: '/understand-stacks/install-api',
+      destination: '/understand-stacks/stacks-1.0-info',
+      permanent: true,
+    },
+    {
+      source: '/stacks-blockchain/installing-memcached',
+      destination: '/understand-stacks/installing-memcached',
+      permanent: true,
+    },
+    {
+      source: '/en-US/:slug*',
+      destination: '/:slug*',
+      permanent: true,
+    },
   ];
 }
 
@@ -613,7 +931,7 @@ module.exports = withFonts(
       trailingSlash: true,
     },
     env: {
-      FATHOM_ID: 'EPNTIXUM',
+      FATHOM_ID: 'FOEMPXUV',
     },
     redirects,
     pageExtensions: ['js', 'ts', 'tsx', 'md', 'mdx'],

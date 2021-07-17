@@ -1,5 +1,5 @@
 ---
-title: Testing Clarity code
+title: Testing Clarity code with JS and Mocha
 description: Learn to Test Clarity Contract Code with JavaScript and Mocha.
 experience: advanced
 duration: 15 minutes
@@ -7,7 +7,7 @@ duration: 15 minutes
 
 ## Introduction
 
-Clarity, the smart contracting language, is based on [LISP](<https://en.wikipedia.org/wiki/Lisp_(programming_language)>). Clarity is an interpreted language, and [decidable](https://en.wikipedia.org/wiki/Recursive_language). In this tutorial, you will learn how to test Clarity and how use [Mocha](https://mochajs.org/) to test Clarity contracts while you develop them.
+Clarity, the smart contracting language, is based on [LISP](<https://en.wikipedia.org/wiki/Lisp_(programming_language)>). Clarity is an interpreted language, and [decidable](https://en.wikipedia.org/wiki/Recursive_language). In this tutorial, you will learn how to test Clarity and how to use [Mocha](https://mochajs.org/) to test Clarity contracts while you develop them.
 
 - Have a working Clarity starter project
 - Understand how to test Clarity code using `.ts` files and Mocha.
@@ -63,7 +63,7 @@ You should see the following response:
 3 passing (412ms)
 ```
 
-Great, all tests are passing! Now, let's have a look at the test implementation. That helps understand how to interact with Clarity smart contracts.
+Great, all tests are passing. Now, let's have a look at the test implementation. That helps understand how to interact with Clarity smart contracts.
 
 ## Interact with contracts
 
@@ -124,7 +124,7 @@ await helloWorldClient.deployContract();
 Finally, you will find snippets that call the public `say-hi` function of the contract:
 
 ```js
-const query = helloWorldClient.createQuery({ function: { name: 'say-hi', args: [] } });
+const query = helloWorldClient.createQuery({ method: { name: 'say-hi', args: [] } });
 const receipt = await helloWorldClient.submitQuery(query);
 const result = Result.unwrapString(receipt);
 ```
@@ -140,4 +140,4 @@ With the completion of this tutorial, you:
 - Created a working Clarity starter project
 - Understood how to test Clarity contracts
 
-Congratulations!
+Congratulations.

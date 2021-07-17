@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Flex,
@@ -17,8 +17,8 @@ import { SearchIcon } from '@components/icons/search';
 import Router from 'next/router';
 import Link from 'next/link';
 import { getCapsizeStyles } from '@components/mdx/typography';
-import { css } from '@stacks/ui-core';
-import { border } from '@common/utils';
+import { useAppState } from '@common/hooks/use-app-state';
+import { css, Theme } from '@stacks/ui-core';
 
 const getLocalUrl = href => {
   const _url = new URL(href);
@@ -33,7 +33,7 @@ const getLocalUrl = href => {
 function Hit({ hit, children }: any) {
   const url = getLocalUrl(hit.url);
   return (
-    <Link href={url} as={url} passHref scroll={!url.includes('#')}>
+    <Link href={url} as={url} passHref scroll={false}>
       <a>{children}</a>
     </Link>
   );
@@ -79,7 +79,7 @@ const searchOptions = {
 let DocSearchModal: any = null;
 
 export const SearchBox: React.FC<BoxProps> = React.memo(props => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const { setState, searchModal } = useAppState();
 
   const importDocSearchModalIfNeeded = React.useCallback(function importDocSearchModalIfNeeded() {
     if (DocSearchModal) {
@@ -94,20 +94,26 @@ export const SearchBox: React.FC<BoxProps> = React.memo(props => {
   const onOpen = React.useCallback(
     function onOpen() {
       void importDocSearchModalIfNeeded().then(() => {
-        setIsOpen(true);
+        console.log('reopening');
+        setState(state => ({ ...state, searchModal: 'open' }));
       });
     },
-    [importDocSearchModalIfNeeded, setIsOpen]
+    [importDocSearchModalIfNeeded]
   );
 
   const onClose = React.useCallback(
     function onClose() {
-      setIsOpen(false);
+      setState(state => ({ ...state, searchModal: 'closed' }));
     },
-    [setIsOpen]
+    [setState]
   );
 
+  useEffect(() => {
+    if (searchModal === 'open') onOpen();
+  }, [searchModal]);
+
   const searchButtonRef = React.useRef(null);
+  const isOpen = Boolean(searchModal === 'open' && DocSearchModal);
 
   useDocSearchKeyboardEvents({ isOpen, onOpen, onClose, searchButtonRef });
 
@@ -116,12 +122,23 @@ export const SearchBox: React.FC<BoxProps> = React.memo(props => {
       <Portal>
         <Fade in={isOpen}>
           {styles => (
-            <Box position="absolute" zIndex={9999} style={styles}>
+            <Box
+              position="absolute"
+              zIndex={9999}
+              style={{ ...styles }}
+              css={(theme: Theme) =>
+                css({
+                  '.DocSearch.DocSearch-Container': {
+                    position: 'fixed',
+                  },
+                })(theme)
+              }
+            >
               <DocSearchModal
                 initialScrollY={window.scrollY}
-                {...searchOptions}
                 onClose={onClose}
                 hitComponent={Hit}
+                {...searchOptions}
               />
             </Box>
           )}

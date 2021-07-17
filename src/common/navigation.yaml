@@ -2,97 +2,143 @@ sections:
   - pages:
       - path: /
       - path: /understand-stacks
+        usePageTitles: true
         pages:
           - path: /overview
           - path: /testnet
-          - path: /proof-of-transfer
-          - path: /mining
+          - path: /regtest
           - path: /accounts
           - path: /transactions
           - path: /network
+          - path: /proof-of-transfer
+          - path: /mining
+          - path: /microblocks
           - path: /stacking
+          - path: /command-line-interface
           - path: /local-development
           - path: /technical-specs
+          - path: /stacks-blockchain-api
         sections:
+          - title: Community
+            usePageTitles: true
+            pages:
+              - external:
+                  href: 'https://github.com/friedger/awesome-stacks-chain'
+                  title: 'Awesome Stacks'
           - title: Tutorials
+            usePageTitles: true
             pages:
               - path: /managing-accounts
               - path: /sending-tokens
+              - path: /running-mainnet-node
               - path: /running-testnet-node
-              - path: /integrate-stacking
-          - title: Stacks 1.0
-            pages:
-              - path: /stacks-1.0-info
-              - path: /best-practices
-              - path: /wire-format
-              - path: /atlas-overview
-              - path: /atlas-how-it-works
-              - path: /atlas-usage
-              - path: /install-api
-              - path: /installing-memcached
-      - path: /build-apps # is an overview page
+              - path: /running-regtest-node
+              - path: /running-api-node
+              - path: /stacking-using-CLI
+
       - path: /write-smart-contracts
+        usePageTitles: true
         pages:
           - path: /overview
           - path: /principals
           - path: /values
-          - path: /cli-wallet-quickstart
+          - path: /clarinet
+          - path: /tokens
         sections:
           - title: Tutorials
             pages:
               - path: /hello-world-tutorial
               - path: /counter-tutorial
+              - path: /nft
+              - path: /billboard-tutorial
               - path: /testing-contracts
-              - path: /public-registry-tutorial
-              - path: /signing-transactions
-      - path: /start-mining # is an overview page
+      - path: /build-apps
+        pages:
+          - path: /overview
+          - external:
+              href: https://github.com/blockstack/stacks.js/tree/master/migration-guide.md
+              title: Migrating from Blockstack.js
+        sections:
+          - title: Guides
+            usePageTitles: true
+            pages:
+              - path: /guides/authentication
+              - path: /guides/transaction-signing
+              - path: /guides/data-storage
+              - path: /guides/integrate-stacking
+              - path: /guides/integrate-stacking-delegation
 
-  - title: Technology
-    pages:
-      - path: /authentication
-        pages:
-          - path: /overview
-        sections:
-          - title: Tutorials
+          - title: Example Apps
             usePageTitles: true
             pages:
-              - path: /building-todo-app
-      - path: /data-storage
-        pages:
-          - path: /overview
-          - path: /storage-guide
-          - path: /authentication
-          - path: /storage-write-read
-          - path: /collections
-          - path: /collection-type
-        sections:
-          - title: Data Indexing
+              - path: /examples/todos
+              - path: /examples/heystack
+              - path: /examples/public-registry
+              - path: /examples/angular
+
+          - title: Stacks.js References
             usePageTitles: true
             pages:
-              - path: /indexing-overview
-              - path: /indexing-models
-              - path: /indexing-collaborate
-              - path: /indexing-server-extras
-          - title: Tutorials
+              - external:
+                  href: 'https://github.com/blockstack/connect#readme'
+                  title: connect
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/auth.html'
+                  title: auth
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/storage.html'
+                  title: storage
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/transactions.html'
+                  title: transactions
+              - external:
+                  href: 'https://blockstack.github.io/stacks-blockchain-api/client/index.html'
+                  title: blockchain-api-client
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/stacking.html'
+                  title: 'stacking'
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/keychain.html'
+                  title: 'keychain'
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/network.html'
+                  title: 'network'
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/encryption.html'
+                  title: 'encryption'
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/profile.html'
+                  title: 'profile'
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/common.html'
+                  title: common
+              - external:
+                  href: 'https://stacks-js-git-master-blockstack.vercel.app/modules/bns.html'
+                  title: bns
+
+          - title: Protocols
+            usePageTitles: true
             pages:
-              - path: /integrate-indexing
-      - path: /naming-system # is an overview page
-      - path: /storage-hubs # this seems out of date, kill?
+              - path: /references/bns
+              - path: /references/gaia
+      - path: /start-mining
+        pages:
+          - path: /mainnet
+          - path: /testnet
+      - path: /storage-hubs
         pages:
           - path: /overview
-          - path: /gaia-admin
         sections:
           - title: Tutorials
             usePageTitles: true
             pages:
               - path: /amazon-ec2-deploy
-              - path: /digital-ocean-deploy
       - path: /references
-        usePageTitles: true
         pages:
-          - path: /blockstack-cli
-          - path: /stacking-contract
-          - path: /stacks-blockchain-api
+          - path: /stacks-cli
+          - external:
+              href: 'https://blockstack.github.io/stacks-blockchain-api/'
+              title: Stacks Blockchain API
           - path: /stacks-node-configuration
           - external:
               href: 'https://blockstack.github.io/stacks.js/'
@@ -101,6 +147,11 @@ sections:
           - path: /glossary
           - path: /deploy-tips
         sections:
+          - title: Contracts
+            usePageTitles: true
+            pages:
+              - path: /bns-contract
+              - path: /stacking-contract
           - title: Clarity Language
             usePageTitles: true
             pages:
@@ -108,8 +159,5 @@ sections:
               - path: /language-types
               - path: /language-keywords
               - path: /language-functions
-  - title: Ecosystem
-    pages:
-      - path: /overview #pbc et al
-      - path: /stacks-token
+
       - path: /contributing

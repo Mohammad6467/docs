@@ -5,23 +5,29 @@ description: 'Storing user data with Stacks'
 
 ## Introduction
 
-A Gaia service can run a simple administrative service co-located with your Gaia hub. This service allows you to administer the Gaia hub with the help of an API key. Gaia hubs installed using the Gaia Amazon Machine Image (AMI) have this service integrated automatically.
+A Gaia service can run a simple administrative service co-located with your Gaia hub. This service allows you to
+administer the Gaia hub with the help of an API key. Gaia hubs installed using the Gaia Amazon Machine Image (AMI) have
+this service integrated automatically.
 
-In this section, you learn how to use the Gaia admin service with your Gaia hub.
+In this section, you learn how to use the Gaia administrator service with your Gaia hub.
 
--> The examples in this section assume that Gaia and the admin service were installed through the Configure a hub on Amazon EC2.
+-> The examples in this section assume that you installed the Gaia service using the
+[Deploy on Amazon EC2](/storage-hubs/amazon-ec2-deploy) tutorial.
 
 ## Understand the configuration files
 
-The admin service relies on two configuration files, the hub's configuration and the configuration of the admin service itself. The hub's configuration is mounted `/tmp/hub-config/config.json` in the `docker_admin_1` container. Your EC2 instance has the admin service configuration in the `/gaia/docker/admin-config/config.json` file.
+The administrator service relies on two configuration files, the hub's configuration and the configuration of the
+administrator service itself. You can find the hub's configration in `/tmp/hub-config/config.json` in the
+`docker_admin_1` container. Your EC2 instance has the administrator service configuration in the
+`/gaia/docker/admin-config/config.json` file.
 
-The admin service needs to know the following:
+The administrator service requires the following information:
 
-- where the Gaia hub config file is located
-- which API key(s) to use when authenticating administrative requests
-- which command(s) to run to restart the Gaia hub on a config change
+- The location of the Gaia hub configuration file
+- which API keys to use when authenticating administrative requests
+- which commands to run to restart the Gaia hub on a config change
 
-The following is the standard admin service config installed with your EC2 instance.
+The following is the standard administrator service config installed with your EC2 instance.
 
 ```json
 {
@@ -40,7 +46,7 @@ The following is the standard admin service config installed with your EC2 insta
   },
   "reloadSettings": {
     "command": "/bin/sh",
-    "argv": ["-c", "docker restart docker_hub_1 &"],
+    "argv": ["-c", "docker restart gaia_hub_1 &"],
     "env": {},
     "setuid": 1000,
     "setgid": 1000
@@ -48,15 +54,17 @@ The following is the standard admin service config installed with your EC2 insta
 }
 ```
 
-The `port` is the port where Gaia is running. The `apiKeys` field is key used for making calls to the hub. The `gaiaSettings`
+The `port` is the port where Gaia is running. The `apiKeys` field is key used for making calls to the hub. The
+`gaiaSettings` field specifies the location of the Gaia hub configuration file.
 
-The `argsTransport` section configures the hub logging. The service uses the `winston` logging service. Refer to their documentation for full details on the [logging configuration options](https://github.com/winstonjs/winston).
+The `argsTransport` section configures the hub logging. The service uses the `winston` logging service. Refer to their
+documentation for full details on the [logging configuration options](https://github.com/winstonjs/winston).
 
 | Field           | Description                                                              |
 | --------------- | ------------------------------------------------------------------------ |
-| level           | Lowest level this transport will log. (default: `info`)                  |
+| level           | Lowest level this transport logs (default: `info`)                       |
 | handleException | Set to true to have this transport handle exceptions. (default: `false`) |
-| timestamp       | The timestamp when the message was received.                             |
+| timestamp       | The timestamp when of the message                                        |
 | stringify       | Converts the output to a JSON string.                                    |
 | colorize        | Colorizes the standard logging level                                     |
 | json            | Log format.                                                              |
@@ -68,81 +76,88 @@ The `reloadSettings` configure the command that is used to reload your Gaia hub.
 | command | A command which reloads the Gaia hub service.                                                                       |
 | argv    | An array containing the command arguments.                                                                          |
 | env     | This is a key/value list of any environment variables that need to be set for the command to run. This is optional. |
-| setuid  | This is the UID under which the command will be run. This is optional.                                              |
-| setgid  | This is the GID under which the command will run. This is optional.                                                 |
+| setuid  | This is the UID under which the command runs. This is optional.                                                     |
+| setgid  | This is the GID under which the command runs. This is optional.                                                     |
 
--> Please review the [JSON config schema](#optional-understand-the-configuration-file-schema) for a list of all available parameters and possible values.
+-> Review the [JSON config schema](#optional-understand-the-configuration-file-schema) for a list of all
+available parameters and possible values.
 
-## Using the admin service APIs
+## Using the administrator service APIs
 
-You use the admin service APIs to manage the hub. Administrating a hub requires
-that you make calls from a terminal on your hub service server. To execute admin
-functions on a Gaia hub created with AWS, you `ssh` into your instance as follows:
+You use the administrator service APIs to manage the hub. Administrating a hub requires that you make calls from a
+terminal on your hub service server. To execute administrator functions on a Gaia hub created with AWS, you `ssh` into
+your instance as follows:
 
 ```bash
-ssh -t -i <your keyfile.pem> -A core@<public ip address>
+ssh -i <your keyfile.pem> admin@<public_ip_address>
 ```
 
 You must also set the `API_KEY` in your environment:
 
 ```bash
-export API_KEY="hello"
+export API_KEY="<API_KEY>"
 ```
 
 You may find it useful to install a JSON processor such as `jq` to process the
-output of the admin commands.
+output of the administrator commands.
 
 ### Restart the Gaia Hub (`POST /v1/admin/reload`)
 
-The admin service will make changes to the Gaia hub's config file, but the
-changes will only take effect when the Gaia hub is reloaded. You can do this
-as follows:
+The administrator service can make changes to the Gaia hub's config file, but the changes only take effect when the Gaia
+hub reboots. You can do this as follows:
 
 ```bash
-$ export API_KEY="hello"
-$ curl -H "Authorization: bearer $API_KEY" -X POST http://localhost:8009/v1/admin/reload
-{"result":"OK"}
+export API_KEY="hello"
+curl -H "Authorization: bearer $API_KEY" -X POST http://localhost:8009/v1/admin/reload
 ```
 
-When you `POST` to this endpoint, the admin service runs the command described
-in the `reloadSettings` section of the config file. It attempts to spawn a
-subprocess from the given `reloadSettings.command` binary, and pass it the
-arguments given in `reloadSettings.argv`. Note that the subprocess will _NOT_
-be run in a shell.
+```json
+{ "result": "OK" }
+```
+
+When you `POST` to this endpoint, the administrator service runs the command described in the `reloadSettings` section
+of the config file. It attempts to spawn a subprocess from the given `reloadSettings.command` binary, and pass it the
+arguments given in `reloadSettings.argv`. Note that the subprocess doesn't run in a user-accesssible shell.
 
 #### Errors
 
-If you do not supply a valid API key, this method fails with HTTP 403.
+If you don't supply a valid API key, this method fails with HTTP 403.
 
-This endpoint returns HTTP 500 if the reload command fails. If this
-happens, you will get back the command's exit code and possibly the signal that
-killed it.
+This endpoint returns HTTP 500 if the reload command fails. If this happens, the return value contains the command's
+exit code and the signal that killed.
 
 ### Get the hub configuration (`GET /v1/admin/config`)
 
-This endpoint is used to read and write a Gaia hub's non-driver-related
-settings. These include the port it listens on, and its proof-checking
+This endpoint can to read and write a Gaia hub's non-driver-related settings. These include the port it listens on, and
+its proof-checking
 settings.
 
 To read the Gaia hub settings, you would run the following:
 
 ```bash
-$ export API_KEY="hello"
-$ curl -H "Authorization: bearer $API_KEY" http://localhost:8009/v1/admin/config {"config":{"port":4000,"proofsConfig":{"proofsRequired":0}}}
+export API_KEY="hello"
+curl -H "Authorization: bearer $API_KEY" http://localhost:8009/v1/admin/config
+```
+
+```json
+{ "config": { "port": 4000, "proofsConfig": { "proofsRequired": 0 } } }
 ```
 
 ### Set the hub configuration (`POST /v1/admin/config`)
 
-To set Gaia hub settings, you simply `POST` the changed JSON fields to this
-endpoint.
+To set Gaia hub settings, `POST` the changed JSON fields to this endpoint.
 
 ```bash
-$ export API_KEY="hello"
-$ curl -H "Authorization: bearer $API_KEY" -H 'Content-Type: application/json' -X POST --data-raw '{"port": 3001}' http://localhost:8009/v1/admin/config
-{"message":"Config updated -- you should reload your Gaia hub now."}
+export API_KEY="hello"
+curl -H "Authorization: bearer $API_KEY" -H 'Content-Type: application/json' -X POST --data-raw '{"port": 3001}' http://localhost:8009/v1/admin/config
 ```
 
-If the settings were successfully applied, the method returns a message to reload your Gaia hub. You can set multiple drivers' settings with a single call. For example, you can set:
+```json
+{ "message": "Config updated -- you should reload your Gaia hub now." }
+```
+
+If the settings were successfully applied, the method returns a message to reload your Gaia hub. You can set multiple
+drivers' settings with a single call. For example, you can set:
 
 - The driver to use (`driver`)
 - The Gaia's read URL endpoint (`readURL`)
@@ -203,62 +218,85 @@ const GAIA_CONFIG_SCHEMA = {
 }
 ```
 
-The same fields are returned on `GET` within a `config` object.
+When performing a `GET` within a `config` object the return value contains the same fields.
 
 #### Errors
 
-If you do not supply a valid API key, both the `GET` and `POST` method fail with HTTP 403.
+If you don't supply a valid API key, both the `GET` and `POST` method fail with HTTP 403.
 
-Only relevant Gaia hub config fields are set. If you `POST` invalid settings
-values, you get an HTTP 400 error.
+In general, you should only set the relevent Gaia hub config fields. If you `POST` invalid settings values, you get an
+HTTP 400 error.
 
 ## Example: Read and write driver settings
 
-Use the `/v1/admin/config` endpoint to read and write storage driver settings. To get the current driver settings, you would run:
+Use the `/v1/admin/config` endpoint to read and write storage driver settings. To get the current driver settings, run
+the following commands in a terminal:
 
 ```bash
-$ export API_KEY="hello"
-$ curl -H "Authorization: bearer $API_KEY" http://localhost:8009/v1/admin/config
-{"config":{"driver":"disk","readURL":"http://localhost:4001/","pageSize":20,"diskSettings":{"storageRootDirectory":"/tmp/gaia-disk"}}}
+export API_KEY="hello"
+curl -H "Authorization: bearer $API_KEY" http://localhost:8009/v1/admin/config
 ```
 
-To update the driver settings, you would run:
+```json
+{
+  "config": {
+    "driver": "disk",
+    "readURL": "http://localhost:4001/",
+    "pageSize": 20,
+    "diskSettings": { "storageRootDirectory": "/tmp/gaia-disk" }
+  }
+}
+```
+
+To update the driver settings, run the following commands in a terminal:
 
 ```bash
-$ export API_KEY="hello"
-$ export AWS_ACCESS_KEY="<hidden>"
-$ export AWS_SECRET_KEY="<hidden>"
-$ curl -H "Authorization: bearer $API_KEY" -H 'Content-Type: application/json' -X POST --data-raw "{\"driver\": \"aws\", \"awsCredentials\": {\"accessKeyId\": \"$AWS_ACCESS_KEY\", \"secretAccessKey\": \"$AWS_SECRET_KEY\"}}" http://localhost:8009/v1/admin/config
-{"message":"Config updated -- you should reload your Gaia hub now."}
+export API_KEY="hello"
+export AWS_ACCESS_KEY="<hidden>"
+export AWS_SECRET_KEY="<hidden>"
+curl -H "Authorization: bearer $API_KEY" -H 'Content-Type: application/json' -X POST --data-raw "{\"driver\": \"aws\", \"awsCredentials\": {\"accessKeyId\": \"$AWS_ACCESS_KEY\", \"secretAccessKey\": \"$AWS_SECRET_KEY\"}}" http://localhost:8009/v1/admin/config
+```
+
+```json
+{ "message": "Config updated -- you should reload your Gaia hub now." }
 ```
 
 ## Example: Read and write the whitelist
 
 This endpoint lets you read and write the `whitelist` section of a Gaia hub, to control who can write to it and list its files.
 
-To get the current whitelist, you would run the following:
+To get the current whitelist, run the following commands in a terminal:
 
 ```bash
-$ export API_KEY="hello"
-$ curl -H "Authorization: bearer $API_KEY" http://localhost:8009/v1/admin/config
-{"config":{"whitelist":["15hUKXg1URbQsmaEHKFV2vP9kCeCsT8gUu"]}}
+export API_KEY="hello"
+curl -H "Authorization: bearer $API_KEY" http://localhost:8009/v1/admin/config
 ```
 
-To set the whitelist, you must set the _entire_ whitelist. To set the list, pass a command such as the following:
+```json
+{ "config": { "whitelist": ["15hUKXg1URbQsmaEHKFV2vP9kCeCsT8gUu"] } }
+```
+
+To set the whitelist, you must set the _entire_ whitelist. To set the list, run the following command in a terminal:
 
 ```bash
-$ export API_KEY="hello"
-$ curl -H "Authorization: bearer $API_KEY" -H 'Content-Type: application/json' -X POST --data-raw '{"whitelist": ["1KDcaHsYJqD7pwHtpDn6sujCVQCY2e1ktw", "15hUKXg1URbQsmaEHKFV2vP9kCeCsT8gUu"]}' http://localhost:8009/v1/admin/config
-{"message":"Config updated -- you should reload your Gaia hub now."}
+export API_KEY="hello"
+curl -H "Authorization: bearer $API_KEY" -H 'Content-Type: application/json' -X POST --data-raw '{"whitelist": ["1KDcaHsYJqD7pwHtpDn6sujCVQCY2e1ktw", "15hUKXg1URbQsmaEHKFV2vP9kCeCsT8gUu"]}' http://localhost:8009/v1/admin/config
 ```
 
-## View logs for the hub or admin service
-
-The logs for each Gaia service are maintained by their respective Docker containers. To view the log for a particular service, use the `docker logs` command. For example, to get the logs for the hub:
-
+```json
+{ "message": "Config updated -- you should reload your Gaia hub now." }
 ```
-$ docker logs docker_hub_1
 
+## View logs for the hub or administrator service
+
+The Docker container for each Gaia service contain the logs for that service. To view the log for a particular service,
+use the `docker logs` command. For example, to get the logs for the hub:
+
+```bash
+docker logs docker_hub_1
+```
+
+```bash
 > gaia-hub@2.3.4 start /src/hub
 > npm run build && node lib/index.js
 
@@ -398,7 +436,7 @@ The following JSON schema details the possible parameters for a hub configuratio
     },
     "maxFileUploadSize": {
       "default": 20,
-      "description": "The maximum allowed POST body size in megabytes. \nThe content-size header is checked, and the POST body stream \nis monitoring while streaming from the client. \n[Recommended] Minimum 100KB (or approximately 0.1MB)",
+      "description": "The maximum allowed POST body size in megabytes. \nThe content-size header is checked, and the POST body stream \nis monitoring while streaming from the client. \n[Recommended] Minimum 100KB (or approximately 0.1 MB)",
       "minimum": 0.1,
       "type": "number"
     },
@@ -456,4 +494,4 @@ The following JSON schema details the possible parameters for a hub configuratio
 }
 ```
 
--> A full list of examples can be found in [the Gaia repository on GitHub](https://github.com/blockstack/gaia/tree/master/hub)
+-> A full list of examples are in [the Gaia repository on GitHub](https://github.com/blockstack/gaia/tree/master/hub)

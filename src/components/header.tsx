@@ -9,8 +9,8 @@ import {
   FlexProps,
   space,
   Stack,
-  StacksLogo,
   StxInline,
+  IconButton,
 } from '@stacks/ui';
 import { Link, LinkProps, Text } from '@components/typography';
 import MenuIcon from 'mdi-react/MenuIcon';
@@ -19,25 +19,25 @@ import { useMobileMenuState } from '@common/hooks/use-mobile-menu';
 
 import { ForwardRefExoticComponentWithAs, forwardRefWithAs } from '@stacks/ui-core';
 import NextLink from 'next/link';
+import { StacksDocsLogo } from '@components/stacks-docs-logo';
 import { ColorModeButton } from '@components/color-mode-button';
-import { PAGE_WIDTH } from '@common/constants';
+import { SearchButton } from '@components/search-button';
 import { border, transition } from '@common/utils';
 import { getCapsizeStyles } from '@components/mdx/typography';
 import { useTouchable } from '@common/hooks/use-touchable';
+import { useRouter } from 'next/router';
 
 const MenuButton = ({ ...rest }: any) => {
   const { isOpen, handleOpen, handleClose } = useMobileMenuState();
   const Icon = isOpen ? CloseIcon : MenuIcon;
   const handleClick = isOpen ? handleClose : handleOpen;
   return (
-    <Flex
+    <IconButton
       color="var(--colors-invert)"
-      display={['flex', 'flex', 'none']}
+      display={['grid', 'grid', 'none']}
       onClick={handleClick}
-      px={1}
-    >
-      <Icon color="currentColor" />
-    </Flex>
+      icon={Icon}
+    />
   );
 };
 
@@ -78,7 +78,7 @@ const nav: NavItem[] = [
       },
       {
         label: 'Discord',
-        href: 'https://discord.com/invite/6PcCMU',
+        href: 'https://discord.gg/zrvWsQC',
       },
     ],
   },
@@ -204,18 +204,7 @@ const LogoLink = React.memo(() => {
     <NextLink href="/" passHref>
       <Link _hover={{ textDecoration: 'none' }} as="a" display="flex">
         <Flex as="span" alignItems="center">
-          <StacksLogo color={color('text-title')} />
-          <HeaderTextItem
-            fontWeight="500"
-            fontSize={1}
-            ml="tight"
-            pt="5px"
-            textTransform="uppercase"
-            color={color('text-caption')}
-            _hover={{ color: color('text-caption') }}
-          >
-            Docs
-          </HeaderTextItem>
+          <StacksDocsLogo color={color('text-title')} />
         </Flex>
       </Link>
     </NextLink>
@@ -235,7 +224,6 @@ const Header = ({ hideSubBar, ...rest }: any) => {
               backdropFilter: 'blur(5px)',
             }}
             height="72px"
-            maxWidth={`${PAGE_WIDTH}px`}
             mx="auto"
             color={color('text-title')}
             {...rest}
@@ -243,8 +231,11 @@ const Header = ({ hideSubBar, ...rest }: any) => {
             <LogoLink />
             <Flex alignItems="center">
               <Navigation />
-              <ColorModeButton />
-              <MenuButton />
+              <Stack isInline spacing="tight">
+                <SearchButton />
+                <ColorModeButton />
+                <MenuButton />
+              </Stack>
             </Flex>
           </Flex>
         </Box>

@@ -45,7 +45,7 @@ npm install --save @stacks/transactions @stacks/blockchain-api-client cross-fetc
 To get started, let's generate a new, random Stacks 2.0 private key:
 
 ```js
-import fetch from 'cross-fetch';
+const { fetch } = require('cross-fetch');
 const {
   makeRandomPrivKey,
   privateKeyToString,
@@ -56,7 +56,8 @@ const { AccountsApi, FaucetsApi, Configuration } = require('@stacks/blockchain-a
 
 const apiConfig = new Configuration({
   fetchApi: fetch,
-  basePath: 'https://stacks-node-api.blockstack.org',
+  // for mainnet, replace `testnet` with `mainnet`
+  basePath: 'https://stacks-node-api.testnet.stacks.co',
 });
 
 const privateKey = makeRandomPrivKey();
@@ -74,15 +75,15 @@ const stacksAddress = getAddressFromPrivateKey(
   TransactionVersion.Testnet // remove for Mainnet addresses
 );
 
-...
+const accounts = new AccountsApi(apiConfig);
 
-  const accounts = new AccountsApi(apiConfig);
-
+async function getAccountInfo() {
   const accountInfo = await accounts.getAccountInfo({
-    principal: stacksAddress
+    principal: stacksAddress,
   });
 
-  console.log(accountInfo);
+  return accountInfo;
+}
 ```
 
 -> Note: A "principal" is any entity that can have a token balance. Find more details in the [Principals guide](/write-smart-contracts/principals).
@@ -105,10 +106,14 @@ The `balance` property represents the Stacks token balance, as hex-encoded strin
 Proofs, provided as hex-encoded strings, can be removed from the responses by setting the `proof` parameter:
 
 ```js
-const accountInfo = await accounts.getAccountInfo({
-  principal: stacksAddress,
-  proof: 0,
-});
+async function getAccountInfoWithoutProof() {
+  const accountInfo = await accounts.getAccountInfo({
+    principal: stacksAddress,
+    proof: 0,
+  });
+
+  return accountInfo;
+}
 ```
 
 ## Step 4: Reviewing account history
@@ -116,13 +121,15 @@ const accountInfo = await accounts.getAccountInfo({
 The following step make requires associated accounts transactions. For simplicity, let's run the faucet for the new account:
 
 ```js
-const faucets = new FaucetsApi(apiConfig);
+async function runFaucetStx() {
+  const faucets = new FaucetsApi(apiConfig);
 
-const faucetTx = await faucets.runFaucetStx({
-  address: stacksAddress,
-});
+  const faucetTx = await faucets.runFaucetStx({
+    address: stacksAddress,
+  });
 
-console.log(faucetTx);
+  return faucetTx;
+}
 ```
 
 The API will respond with a new transaction ID and confirmation that the faucet run was successful:
@@ -135,16 +142,18 @@ The API will respond with a new transaction ID and confirmation that the faucet 
 }
 ```
 
--> Note: Wait a few minutes for the transaction to complete. You can review the status using the Explorer, by navigating to the following URL: `https://testnet-explorer.blockstack.org/txid/<txid>`.
+-> Note: Wait a few minutes for the transaction to complete. You can review the status using the Explorer, by navigating to the following URL: `https://explorer.stacks.co/txid/<txid>`.
 
 Assuming the faucet transaction was successfully processed, you can review the account history. We are expecting at least one transactions to show up in the account history.
 
 ```js
-const history = await accounts.getAccountTransactions({
-  principal: stacksAddress,
-});
+async function getAccountTransactions() {
+  const history = await accounts.getAccountTransactions({
+    principal: stacksAddress,
+  });
 
-console.log(history);
+  return history;
+}
 ```
 
 The API will respond with a paginatable list of transactions associated with the account:
@@ -197,11 +206,15 @@ To make API responses more compact, lists returned by the API are paginated. For
 In order to paginate throughout the full result set, we can use the `limit` and `offset` request properties. Here is an example where we request transactions 50-100 for an account:
 
 ```js
-const history = await accounts.getAccountTransactions({
-  principal: stacksAddress,
-  limit: 50,
-  offset: 50,
-});
+async function getAccountTransactions() {
+  const history = await accounts.getAccountTransactions({
+    principal: stacksAddress,
+    limit: 50,
+    offset: 50,
+  });
+
+  return history;
+}
 ```
 
 ## Step 5: Getting account balances
@@ -209,11 +222,13 @@ const history = await accounts.getAccountTransactions({
 As mentioned above, any Stacks address can have a variety of tokens and associated balances. In order to get balances for all Stacks, fungible, and non-fungible tokens, we can use the `getAccountBalance` method:
 
 ```js
-const balances = await accounts.getAccountBalance({
-  principal: stacksAddress,
-});
+async function getAccountBalance() {
+  const balances = await accounts.getAccountBalance({
+    principal: stacksAddress,
+  });
 
-console.log(balances);
+  return balances;
+}
 ```
 
 The API will respond with the following breakdown of token balances:
