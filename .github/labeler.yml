@@ -1,0 +1,16 @@
+# Add labels when specific files are changed
+translations:
+  - changed-files:
+      - any-glob-to-any-file: 'i18n/**/*'
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['docs/**/*.md', 'docs/**/*.mdx']
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: ['package.json', 'package-lock.json']
+
+docusaurus-config:
+  - changed-files:
+      - any-glob-to-any-file: 'docusaurus.config.js'

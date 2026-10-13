@@ -1,32 +1,34 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/blockstack/docs)
+[![License](https://img.shields.io/github/license/stacks-network/docs)](./LICENSE)
 
-# Stacks documentation
+# The Official Stacks Docs
 
-![A screenshot of docs.blockstack.org](/public/images/docs-homepage.png)
+The Stacks documentation serves as the comprehensive resource for understanding and building on Stacks, a Bitcoin Layer 2 that enables fast, low-cost transactions and full-featured smart contracts secured by Bitcoin. These docs guide three main audiences: developers looking to build apps and deploy smart contracts with tools like Clarity and Stacks.js; operators running nodes, miners, and signers to support network infrastructure; and learners seeking to understand how Stacks activates the Bitcoin economy through its unique technical architecture. With sections covering everything from beginner quickstarts to advanced technical references, the docs aim to empower the global builder community to create a Bitcoin-native onchain economy.
 
-## Running and building the site locally
+## Contribute to the Stacks Docs
 
-If you are interested in contributing to the site and making changes, please refer to our [contributing guide here](https://docs.blockstack.org/ecosystem/contributing).
+The Stacks docs are built using GitBook with a two-way sync with the [docs repository on GitHub](https://github.com/stacks-network/docs). 
 
-## Generated documentation
+Because of this two-way sync, you can contribute to the documentation in one of two ways:
 
-### Blockstack CLI reference
+1. You can fork the docs repo, add your change, and then create a PR to be merged into the main docs
+2. You can create an issue, and someone that works on the docs will take a look and implement it if it is a necessary change
 
-The `src/_data/cli-reference.json` file is generated from the `blockstack-cli` subcommand `docs`.
+All of the content files are markdown files. The structure and layout of the docs are based on Gitbook's Spaces. Each Space represents a top-level navigation section of the public docs website.
 
-1. Install the latest version of the cli according to the instructions at: https://github.com/blockstack/cli-blockstack
+Below are the current main Spaces that make up the docs:
 
-2. Generate the json for the cli in the `docs.blockstack` repo.
+- **Learn**: Technical explainers and concept breakdowns on different aspects of Stacks.
+- **Build**: Developer quickstarts, How-To guides, integration examples, Clarinet guides, Stacks.js guides, etc.
+- **Operate**: Setup and configuration guides on running Stacks nodes, miners, and signers.
+- **Reference**: Clarity language details, protocol specs, SDK & APIs definitions, and other tooling references.
+- **Tutorials**: End-to-end learning walkthroughs on building complete applications with Stacks. 
 
-   ```
-   $ blockstack-cli docs > src/_data/cli-reference.json
-   ```
+Besides the actual content, each Space consists of:
 
-### Clarity Reference
+- `.gitbook`: Folder for assets such as images, pdfs, etc.
+- `README.md`: Acts as the landing page of the Space's section.
+- `SUMMARY.md`: Table of contents
 
-There is a json file that is generated via the `stacks-blockchain` repo, which automatically brings it over to this repo
-via a github action.
+What kinds of changes are we looking for?
 
-### FAQs
-
-All of the FAQs found at `/reference/faqs` are pulled dynamically from the zendesk api and rendered in this project.
+If you see a typo, a missing guide or tutorial, an unclear explanation, or really anything else you think could improve the quality of the documentation, please feel free to open an issue or create a pull request.
